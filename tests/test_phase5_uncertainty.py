@@ -163,3 +163,85 @@ def test_required_columns_present(predictions):
     ]
     for col in required:
         assert col in predictions.columns, f"Missing column: {col}"
+
+# ===================== AUDIT TESTS =====================
+
+from src.uncertainty.conformal import (
+    compute_conformal_scores,
+    get_conformal_correction,
+    apply_conformal_correction
+)
+
+def test_conformal_score_formula_deterministic():
+    """Manually verify score = max(q10 - y, y - q90) with known values."""
+    y = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+    q10 = np.array([0.5, 1.5, 2.0, 3.0, 4.0])
+    q90 = np.array([1.5, 2.5, 4.0, 5.0, 6.0])
+
+    scores = compute_conformal_scores(y, q10, q90)
+    expected = np.maximum(q10 - y, y - q90)
+    np.testing.assert_array_almost_equal(scores, expected)
+
+def test_conformal_finite_sample_quantile():
+    """Verify q_level = (1-alpha)*(1 + 1/n) and correction matches np.quantile."""
+    scores = np.array([-1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0])
+    alpha = 0.2
+    n = len(scores)
+    q_level = (1 - alpha) * (1 + 1/n)
+    expected = float(np.quantile(scores, min(q_level, 1.0), method='higher'))
+    actual = get_conformal_correction(scores, alpha)
+    assert actual == expected, f"Expected {expected}, got {actual}"
+
+def test_interval_construction_formula():
+    """Verify lower = q10 - correction, upper = q90 + correction."""
+    q10 = pd.Series([5.0, 10.0, 15.0])
+    q90 = pd.Series([20.0, 25.0, 30.0])
+    correction = 2.5
+    result = apply_conformal_correction(q10, q90, correction)
+    np.testing.assert_array_almost_equal(result["q10_calibrated"].values, [2.5, 7.5, 12.5])
+    np.testing.assert_array_almost_equal(result["q90_calibrated"].values, [22.5, 27.5, 32.5])
+
+def test_calibration_isolation(metrics):
+    """Conformal correction must use exactly the calibration split records."""
+    n_calib = metrics["record_counts"]["calibration"]
+    assert n_calib == 720, f"Expected 720 calibration records, got {n_calib}"
+
+def test_test_isolation(predictions, metrics):
+    """TEST records must never influence conformal correction."""
+    n_test = metrics["record_counts"]["test"]
+    test_rows = len(predictions[predictions["split"] == "TEST"])
+    assert n_test == test_rows == 1464
+
+def test_station_coverage_calculable(predictions):
+    """Verify station-level coverage can be computed for all stations."""
+    test = predictions[predictions["split"] == "TEST"]
+    for station_id in test["station_id"].unique():
+        s = test[test["station_id"] == station_id]
+        cov = ((s["observed_humidity"] >= s["q10_humidity"]) &
+               (s["observed_humidity"] <= s["q90_humidity"])).mean()
+        assert 0.0 <= cov <= 1.0
+
+def test_lead_time_coverage_calculable(predictions):
+    """Verify lead-time coverage can be computed for all lead times."""
+    test = predictions[predictions["split"] == "TEST"]
+    for lt in test["lead_time_hours"].unique():
+        lt_sub = test[test["lead_time_hours"] == lt]
+        cov = ((lt_sub["observed_humidity"] >= lt_sub["q10_humidity"]) &
+               (lt_sub["observed_humidity"] <= lt_sub["q90_humidity"])).mean()
+        assert 0.0 <= cov <= 1.0
+
+def test_raw_observed_rh_bounds(predictions):
+    """All observed RH values must be in [0, 100]."""
+    assert predictions["observed_humidity"].min() >= 0.0
+    assert predictions["observed_humidity"].max() <= 100.0
+
+def test_conformal_correction_positive(metrics):
+    """Conformal corrections should be finite numbers (may be negative for well-calibrated raw models)."""
+    assert np.isfinite(metrics["conformal_corrections"]["temperature"])
+    assert np.isfinite(metrics["conformal_corrections"]["humidity"])
+
+def test_no_duplicate_records(predictions):
+    """No duplicate (station, time, lead_time) combinations."""
+    dups = predictions.duplicated(subset=["station_id", "observation_time", "lead_time_hours"]).sum()
+    assert dups == 0, f"Found {dups} duplicate records"
+

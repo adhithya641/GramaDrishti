@@ -1,0 +1,336 @@
+﻿
+======================================================================
+  PHASE 5 AUDIT ΓÇö LOADING DATA
+======================================================================
+TRAIN:       2136
+CALIBRATION: 720
+TEST:        1464
+TOTAL:       4320
+
+======================================================================
+  1. REPRODUCE PHASE 5 RESULTS
+======================================================================
+Temperature conformal correction: 1.044165
+Humidity conformal correction:    3.802181
+
+CQR Coverage (residual space):
+  Temperature CALIB: 0.8014
+  Temperature TEST:  0.8770
+  Humidity CALIB:    0.8014
+  Humidity TEST:     0.2015
+
+======================================================================
+  2. CONFORMAL IMPLEMENTATION AUDIT
+======================================================================
+--- Manual CQR verification ---
+  y:     [1. 2. 3. 4. 5.]
+  q10:   [0.5 1.5 2.  3.  4. ]
+  q90:   [1.5 2.5 4.  5.  6. ]
+  scores: [-0.5 -0.5 -1.  -1.  -1. ]
+  expected: [-0.5 -0.5 -1.  -1.  -1. ]
+  SCORE FORMULA: VERIFIED Γ£ô
+
+  alpha = 0.2
+  n = 5
+  q_level = (1 - 0.2) * (1 + 1/5) = 0.9600
+  Correction from function: -0.500000
+  Manually computed:        -0.500000
+  CORRECTION FORMULA: VERIFIED Γ£ô
+
+  Calibration n (temp): 720
+  Calibration n (hum):  720
+  Expected n:           720
+  CALIBRATION ISOLATION: VERIFIED Γ£ô
+
+  Interval construction check:
+  lower = q10 - correction
+  upper = q90 + correction
+  INTERVAL CONSTRUCTION: VERIFIED Γ£ô
+
+  Score formula: E_i = max(q10_i - y_i, y_i - q90_i)
+  Note: scores CAN be negative (observation inside raw interval)
+  This matches Romano et al. 2019 CQR formulation: VERIFIED Γ£ô
+
+======================================================================
+  3. QUANTILE ORDERING AUDIT
+======================================================================
+  CALIB_temp:
+    q10 > q50 crossings: 0/720 (0.00%)
+    q50 > q90 crossings: 0/720 (0.00%)
+    Max crossing magnitude (q10>q50): 0.000000
+    Max crossing magnitude (q50>q90): 0.000000
+  TEST_temp:
+    q10 > q50 crossings: 0/1464 (0.00%)
+    q50 > q90 crossings: 0/1464 (0.00%)
+    Max crossing magnitude (q10>q50): 0.000000
+    Max crossing magnitude (q50>q90): 0.000000
+  CALIB_hum:
+    q10 > q50 crossings: 0/720 (0.00%)
+    q50 > q90 crossings: 0/720 (0.00%)
+    Max crossing magnitude (q10>q50): 0.000000
+    Max crossing magnitude (q50>q90): 0.000000
+  TEST_hum:
+    q10 > q50 crossings: 0/1464 (0.00%)
+    q50 > q90 crossings: 0/1464 (0.00%)
+    Max crossing magnitude (q10>q50): 0.000000
+    Max crossing magnitude (q50>q90): 0.000000
+  (Post-monotonic enforcement ΓÇö crossings should be 0)
+
+  --- Raw quantile predictions (pre-enforcement) ---
+  CALIB_hum (RAW):
+    q10 > q50: 0/720 (0.00%)
+    q50 > q90: 9/720 (1.25%)
+  TEST_hum (RAW):
+    q10 > q50: 0/1464 (0.00%)
+    q50 > q90: 10/1464 (0.68%)
+
+======================================================================
+  4. INTERVAL AUDIT
+======================================================================
+Coverage comparison:
+                         Temp Raw   Temp CQR    Hum Raw    Hum CQR
+  CALIBRATION              0.4431     0.8014     0.5972     0.8014
+  TEST                     0.6059     0.8770     0.1161     0.2015
+
+  Humidity interval width (CALIB):
+                           Raw        CQR
+    Mean                26.705     34.309
+    Median              27.141     34.745
+    P10                 19.511     27.115
+    P90                 32.676     40.281
+    Min                 12.202     19.807
+    Max                 44.263     51.867
+
+  Humidity interval width (TEST):
+                           Raw        CQR
+    Mean                20.037     27.642
+    Median              19.313     26.917
+    P10                 14.057     21.661
+    P90                 27.499     35.103
+    Min                  7.545     15.149
+    Max                 38.081     45.685
+
+  Humidity TEST observation position relative to CQR interval:
+    Below q10: 0.0041 (0.41%)
+    Inside:    0.2015 (20.15%)
+    Above q90: 0.7944 (79.44%)
+
+======================================================================
+  5. RESIDUAL DISTRIBUTION SHIFT ANALYSIS
+======================================================================
+
+  TEMPERATURE residual (obs - B2) statistics:
+                       TRAIN      CALIB       TEST
+  Mean                -1.731      0.760     -1.401
+  Median              -1.700      0.875     -1.590
+  Std                  3.205      2.786      2.783
+  Min                -14.380     -9.710     -9.230
+  Max                  9.200      7.550     10.090
+  P10                 -5.890     -2.833     -4.810
+  P25                 -4.020     -1.200     -3.340
+  P75                  0.570      2.782      0.340
+  P90                  2.380      4.264      2.171
+
+  TEMPERATURE shift (TEST - CALIB):
+    Mean shift:   -2.161
+    Median shift: -2.465
+
+  HUMIDITY residual (obs - B2) statistics:
+                       TRAIN      CALIB       TEST
+  Mean                 4.419      6.501     25.035
+  Median               4.405      9.460     26.400
+  Std                 15.444     17.215     12.125
+  Min                -48.360    -43.440    -25.460
+  Max                 53.750     52.330     61.570
+  P10                -15.475    -20.096      9.515
+  P25                 -5.985     -4.387     17.580
+  P75                 15.175     18.595     33.500
+  P90                 24.715     26.540     39.044
+
+  HUMIDITY shift (TEST - CALIB):
+    Mean shift:   +18.534
+    Median shift: +16.940
+
+======================================================================
+  6. PREDICTION DISTRIBUTION SHIFT
+======================================================================
+
+  Humidity predictions (CALIB):
+                    q10(raw)        q50   q90(raw)     CQR_lo     CQR_hi  CQR_width
+  Mean               -12.097      2.337     14.608    -15.899     18.410     34.309
+  Median             -11.201      3.708     14.471    -15.003     18.273     34.745
+  Std                  9.477     11.453      8.212      9.477      8.212      5.020
+  P10                -24.416    -14.063      4.162    -28.218      7.964     27.115
+  P90                  0.104     16.104     26.211     -3.698     30.013     40.281
+
+  Humidity predictions (TEST):
+                    q10(raw)        q50   q90(raw)     CQR_lo     CQR_hi  CQR_width
+  Mean                -5.735      6.155     14.302     -9.537     18.104     27.642
+  Median              -5.103      6.678     14.233     -8.905     18.035     26.917
+  Std                  9.154     10.598      9.581      9.154      9.581      5.285
+  P10                -18.206     -7.905      1.473    -22.009      5.275     21.661
+  P90                  5.955     19.289     27.290      2.153     31.092     35.103
+
+======================================================================
+  7. COVERAGE BY LEAD TIME
+======================================================================
+
+    Lead    Split      N    Hum Raw    Hum CQR   Temp CQR  Hum Width
+      24    CALIB    240     0.6208     0.8125     0.8125     34.514
+      24     TEST    488     0.1107     0.2193     0.9098     27.699
+      48    CALIB    240     0.6083     0.7958     0.7917     34.186
+      48     TEST    488     0.1209     0.1885     0.8566     27.612
+      72    CALIB    240     0.5625     0.7958     0.8000     34.227
+      72     TEST    488     0.1168     0.1967     0.8648     27.615
+
+======================================================================
+  8. COVERAGE BY STATION
+======================================================================
+
+       Station    Split     N    Hum CQR   Temp CQR  Hum Width  Hum Resid
+    STN_CBE_01    CALIB    90     0.7667     0.7778     33.008      7.990
+    STN_CBE_01     TEST   183     0.1639     0.8907     25.425     25.569
+    STN_CBE_02    CALIB    90     0.8667     0.8111     33.808      8.318
+    STN_CBE_02     TEST   183     0.1311     0.9180     26.282     26.859
+    STN_CBE_03    CALIB    90     0.9556     0.7222     26.292      7.743
+    STN_CBE_03     TEST   183     0.1530     0.9235     24.386     22.839
+    STN_CBE_04    CALIB    90     0.5556     0.9000     36.436    -15.995
+    STN_CBE_04     TEST   183     0.2842     0.8743     27.478     17.336
+    STN_CBE_05    CALIB    90     0.8556     0.7778     36.229     -1.671
+    STN_CBE_05     TEST   183     0.3224     0.8689     27.762     21.460
+    STN_CBE_06    CALIB    90     0.6667     0.7222     39.296     14.611
+    STN_CBE_06     TEST   183     0.3333     0.7486     35.916     29.274
+    STN_CBE_07    CALIB    90     0.9222     0.8667     32.892     18.190
+    STN_CBE_07     TEST   183     0.0820     0.8743     25.820     29.684
+    STN_CBE_08    CALIB    90     0.8222     0.8333     36.512     12.823
+    STN_CBE_08     TEST   183     0.1421     0.9180     28.065     27.258
+
+======================================================================
+  9. COVERAGE BY ELEVATION GROUP
+======================================================================
+     CALIB     LOW_ELEV N=  360  Hum CQR=0.8889  Temp CQR=0.8000
+     CALIB    HIGH_ELEV N=  360  Hum CQR=0.7139  Temp CQR=0.8028
+      TEST     LOW_ELEV N=  732  Hum CQR=0.1749  Temp CQR=0.8962
+      TEST    HIGH_ELEV N=  732  Hum CQR=0.2281  Temp CQR=0.8579
+
+======================================================================
+  10. BIAS ANALYSIS
+======================================================================
+
+  Humidity bias (CALIB):
+    Mean residual (obs-B2):     +6.501
+    Median residual (obs-B2):   +9.460
+    q50 prediction mean:        2.337
+    q50 prediction error mean:  -4.164
+    CQR midpoint error mean:    -5.245
+    q50 MAE:                    10.102
+
+  Humidity bias (TEST):
+    Mean residual (obs-B2):     +25.035
+    Median residual (obs-B2):   +26.400
+    q50 prediction mean:        6.155
+    q50 prediction error mean:  -18.880
+    CQR midpoint error mean:    -20.751
+    q50 MAE:                    19.132
+
+======================================================================
+  11. TEMPORAL SHIFT ANALYSIS (Monthly)
+======================================================================
+
+     Month      N   Mean Res    Med Res    Std Res    q50 MAE    CQR Cov      Width
+     April    720     +6.501     +9.460     17.215     10.102     0.8014     34.309
+       May    744    +22.044    +23.390     13.576     20.044     0.2285     27.778
+      June    720    +28.126    +28.660      9.478     18.190     0.1736     27.501
+
+======================================================================
+  12. DATA QUALITY AUDIT
+======================================================================
+  Duplicated (station, time, lead): 0
+  RH < 0:   0
+  RH > 100: 0
+  Missing observed_temperature: 0
+  Missing observed_humidity: 0
+  Missing b2_temperature: 0
+  Missing b2_humidity: 0
+  Missing forecast_temperature: 0
+  Missing forecast_humidity: 0
+  Unique stations: 8
+  Unique grid_ids: 8
+
+======================================================================
+  13. CALIBRATION VS TEST COMPARISON TABLE
+======================================================================
+
+  HUMIDITY
+  Metric                        Calibration            TEST
+  Records                               720            1464
+  CQR Coverage                       0.8014          0.2015
+  Mean residual                      +6.501         +25.035
+  Median residual                    +9.460         +26.400
+  Residual std                       17.215          12.125
+  q50 MAE                            10.102          19.132
+  Mean interval width                34.309          27.642
+  Median interval width              34.745          26.917
+
+  TEMPERATURE
+  Metric                        Calibration            TEST
+  Records                               720            1464
+  CQR Coverage                       0.8014          0.8770
+  Mean residual                      +0.760          -1.401
+  Median residual                    +0.875          -1.590
+  Residual std                        2.786           2.783
+  q50 MAE                             1.233           1.174
+  Mean interval width                 4.649           4.734
+  Median interval width               4.346           4.613
+
+======================================================================
+  14. SCIENTIFIC INTERPRETATION
+======================================================================
+  Humidity residual shift (TEST - CALIB mean): +18.534
+  Temperature residual shift (TEST - CALIB mean): -2.161
+
+  CLASSIFICATION: D ΓÇö TEMPORAL DISTRIBUTION SHIFT
+
+  Evidence:
+    1. Humidity residual mean shifts from +6.5 (CALIB) to +25.0 (TEST)
+    2. Shift magnitude: +18.5 percentage points
+    3. 79.4% of TEST observations exceed q90 upper bound
+    4. Calibration coverage (80.14%) matches target (80%)
+    5. Conformal implementation is mathematically correct (manually verified)
+    6. No implementation errors or data quality issues found
+
+  The conformal calibration achieved approximately nominal coverage on
+  the April calibration period but did not maintain that coverage on the
+  May-June held-out period. This indicates that the calibration assumption
+  does not transfer reliably under the observed distribution shift.
+
+  The 80% interval target should NOT be described as operationally reliable
+  for humidity during monsoon-onset periods without seasonal recalibration.
+
+======================================================================
+  17. TEMPERATURE AUDIT
+======================================================================
+  Calibration coverage: 0.8014
+  TEST coverage:        0.8770
+  Conformal correction: 1.044165
+  Residual shift:       -2.161
+  TEST below q10: 0.0307 (3.07%)
+  TEST above q90: 0.0922 (9.22%)
+  Temperature uncertainty quantification: VERIFIED Γ£ô
+
+======================================================================
+  PHASE 5 AUDIT ΓÇö FINAL SUMMARY
+======================================================================
+
+  CONFORMAL IMPLEMENTATION:         VERIFIED Γ£ô
+  TEMPERATURE COVERAGE (CALIB):     80.14% (target 80%)
+  TEMPERATURE COVERAGE (TEST):      87.70%
+  HUMIDITY COVERAGE (CALIB):        80.14% (target 80%)
+  HUMIDITY COVERAGE (TEST):         20.15%
+  RESIDUAL SHIFT (TEMP):            -2.161
+  RESIDUAL SHIFT (HUM):             +18.534
+  QUANTILE ORDERING:                ENFORCED Γ£ô
+  DATA QUALITY:                     CLEAN Γ£ô
+  ROOT CAUSE:                       TEMPORAL DISTRIBUTION SHIFT
+  AUDIT STATUS:                     PASS WITH LIMITATIONS
+

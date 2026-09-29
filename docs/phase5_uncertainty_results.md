@@ -175,7 +175,7 @@ correctly under exchangeable conditions.
 
 ## Test Suite
 
-**93/93 tests passing** (75 Phase 1–4 + 18 Phase 5)
+**103/103 tests passing** (75 Phase 1–4 + 28 Phase 5)
 
 Phase 5 tests cover:
 - Output existence and model artifacts

@@ -29,7 +29,7 @@
   "validation_summary": {
     "dataset_name": "Weather Station Observations",
     "source_key": "observations",
-    "timestamp": "2026-09-29T19:08:17.432357+00:00",
+    "timestamp": "2026-09-29T20:03:39.168522+00:00",
     "source": "UNKNOWN",
     "status": "READY",
     "is_valid": true,
