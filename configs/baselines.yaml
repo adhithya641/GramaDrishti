@@ -1,0 +1,66 @@
+# ============================================================================
+# GramDrishti — Baseline Forecasting & Matchup Configuration
+# SIH PS 26074: Panchayat-Level Weather Downscaling for Agro-Advisories
+# ============================================================================
+
+project:
+  name: "GramDrishti"
+  phase: 3
+  phase_name: "Weather Matchup & Baseline Forecasting Dataset"
+
+# ---------------------------------------------------------------------------
+# Matching rules & tolerances
+# ---------------------------------------------------------------------------
+matching:
+  timestamp_tolerance_minutes: 0  # Exact datetime matching required
+  max_lead_time_hours: 72
+  min_lead_time_hours: 24
+
+# ---------------------------------------------------------------------------
+# Environmental Lapse Rate for Baseline B2 (Elevation Correction)
+# ---------------------------------------------------------------------------
+lapse_rate:
+  temperature_deg_per_meter: -0.0065  # Standard lapse rate: -6.5 °C / 1000m (-0.0065 °C/m)
+  notes: >
+    Applied to temperature: T_corr = T_fc + (-0.0065) * (z_station - z_forecast_ref).
+    Humidity lapse rate is NOT applied due to non-linear vapor pressure thermodynamics.
+
+# ---------------------------------------------------------------------------
+# Chronological Temporal Splits (No Random Splitting)
+# ---------------------------------------------------------------------------
+temporal_splits:
+  train:
+    start_date: "2024-01-01"
+    end_date: "2024-03-31"
+  calibration:
+    start_date: "2024-04-01"
+    end_date: "2024-04-30"
+  test:
+    start_date: "2024-05-01"
+    end_date: "2024-06-30"
+
+# ---------------------------------------------------------------------------
+# Quantile Mapping Baseline B3 Settings
+# ---------------------------------------------------------------------------
+quantile_mapping:
+  n_quantiles: 100
+  method: "empirical"
+  fit_split: "TRAIN"  # Fitted ONLY on TRAIN split to prevent future leakage
+
+# ---------------------------------------------------------------------------
+# Bilinear Interpolation Baseline B1 Settings
+# ---------------------------------------------------------------------------
+interpolation:
+  min_neighbors: 4
+  fallback_status: "FALLBACK_B0"
+
+# ---------------------------------------------------------------------------
+# Observation QC & Target Policy
+# ---------------------------------------------------------------------------
+qc_policy:
+  use_valid: true
+  flag_suspicious: true
+  exclude_invalid_for_truth: true
+  notes: >
+    VALID observations are target truth. SUSPICIOUS observations are flagged and included
+    with warnings. INVALID observations are excluded from evaluation truth.

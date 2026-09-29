@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-09-29T18:32:58.848540+00:00",
+  "source_dataset": "data/processed/matchups/weather_matchups.csv",
+  "geospatial_source": "data/processed/geospatial/geospatial_features_master.csv",
+  "targets": {
+    "temperature_residual": "observed_temperature - b2_temperature",
+    "humidity_residual": "observed_humidity - b2_humidity"
+  },
+  "temporal_splits": {
+    "train_start": "2024-01-01",
+    "train_end": "2024-03-31",
+    "calibration_start": "2024-04-01",
+    "calibration_end": "2024-04-30",
+    "test_start": "2024-05-01",
+    "test_end": "2024-06-30"
+  },
+  "random_seed": 42,
+  "lightgbm_version": "4.7.0",
+  "counts": {
+    "train_records": 2136,
+    "calibration_records": 720,
+    "test_records": 1464,
+    "total_records": 4320
+  }
+}

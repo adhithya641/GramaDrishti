@@ -1,0 +1,105 @@
+# GramDrishti Phase 4 — LightGBM Residual Model Configuration
+# SIH PS 26074 — Panchayat-Level Weather Downscaling
+
+project: GramDrishti
+phase: 4
+description: LightGBM residual correction configuration for temperature and humidity
+
+# Transparent reproducible CPU LightGBM parameters
+model_params:
+  objective: "regression"
+  metric: "rmse"
+  learning_rate: 0.05
+  n_estimators: 100
+  max_depth: 5
+  num_leaves: 15
+  min_child_samples: 10
+  subsample: 0.8
+  colsample_bytree: 0.8
+  random_state: 42
+  n_jobs: -1
+  verbose: -1
+
+# Deterministic chronological splits
+temporal_split:
+  train_start: "2024-01-01"
+  train_end: "2024-03-31"
+  calibration_start: "2024-04-01"
+  calibration_end: "2024-04-30"
+  test_start: "2024-05-01"
+  test_end: "2024-06-30"
+
+# Target definitions
+targets:
+  temperature:
+    observation_col: "observed_temperature"
+    baseline_col: "b2_temperature"
+    residual_col: "residual_temperature"
+    pred_col: "ml_temperature"
+  humidity:
+    observation_col: "observed_humidity"
+    baseline_col: "b2_humidity"
+    residual_col: "residual_humidity"
+    pred_col: "ml_humidity"
+
+# Feature specification
+features:
+  categorical:
+    - "dominant_landcover_class"
+
+  forecast:
+    - "forecast_temperature"
+    - "forecast_humidity"
+    - "forecast_rainfall"
+    - "lead_time_hours"
+
+  geospatial:
+    - "elevation_mean"
+    - "elevation_std"
+    - "elevation_range"
+    - "slope_mean"
+    - "slope_std"
+    - "aspect_sin"
+    - "aspect_cos"
+    - "tri_mean"
+    - "tri_std"
+    - "landcover_fraction_tree"
+    - "landcover_fraction_shrub"
+    - "landcover_fraction_grass"
+    - "landcover_fraction_cropland"
+    - "landcover_fraction_builtup"
+    - "landcover_fraction_water"
+    - "distance_to_nearest_water"
+    - "distance_to_forecast_grid_m"
+
+  temporal:
+    - "day_of_year_sin"
+    - "day_of_year_cos"
+    - "month"
+
+# Explicitly forbidden features (preventing data leakage)
+strictly_forbidden_features:
+  - "station_id"
+  - "station_group"
+  - "latitude_obs"
+  - "longitude_obs"
+  - "observed_temperature"
+  - "observed_humidity"
+  - "observed_rainfall"
+  - "residual_temperature"
+  - "residual_humidity"
+  - "b0_temperature"
+  - "b0_humidity"
+  - "b1_temperature"
+  - "b1_humidity"
+  - "b3_temperature"
+  - "b3_humidity"
+
+# Output paths
+paths:
+  matchups_csv: "data/processed/matchups/weather_matchups.csv"
+  geospatial_master_csv: "data/processed/geospatial/geospatial_features_master.csv"
+  models_dir: "models/"
+  processed_models_dir: "data/processed/models/"
+  predictions_csv: "data/processed/predictions/weather_predictions.csv"
+  validation_json: "data/metadata/validation_phase4_ml.json"
