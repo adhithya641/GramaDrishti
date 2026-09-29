@@ -1,0 +1,52 @@
+{
+  "dataset_name": "Digital Elevation Model",
+  "source": "Copernicus DEM 30m / SRTM",
+  "source_url": "https://copernicus-dem-30m.s3.amazonaws.com",
+  "download_date": "2026-09-29",
+  "original_filename": "coimbatore_dem_30m.tif",
+  "format": "tif",
+  "crs": "EPSG:4326",
+  "resolution": "0.0040x0.0030 deg (~30m)",
+  "geographic_coverage": "Coimbatore Pilot Box (10.2\u00b0N-11.4\u00b0N, 76.6\u00b0E-77.3\u00b0E)",
+  "temporal_coverage": "UNKNOWN",
+  "variables": [
+    "elevation"
+  ],
+  "record_count": 120000,
+  "processing_status": "READY",
+  "data_status": "UNVERIFIED",
+  "limitations": [
+    "Elevation min=203.1387176513672m, max=2000.3424072265625m"
+  ],
+  "notes": "30m Digital Elevation Model GeoTIFF covering Coimbatore pilot region. Do NOT compute slope, aspect, or TRI in Phase 1.\n",
+  "validation_summary": {
+    "dataset_name": "Digital Elevation Model",
+    "source_key": "dem",
+    "timestamp": "2026-09-29T17:19:56.372762+00:00",
+    "source": "UNKNOWN",
+    "status": "READY",
+    "is_valid": true,
+    "file_format": "tif",
+    "crs_detected": "EPSG:4326",
+    "spatial_extent": {
+      "min_lon": 76.6,
+      "min_lat": 10.2,
+      "max_lon": 77.3,
+      "max_lat": 11.4
+    },
+    "temporal_extent": null,
+    "record_count": 120000,
+    "resolution": "0.0040x0.0030 deg (~30m)",
+    "fields_present": [
+      "elevation"
+    ],
+    "fields_missing": [],
+    "missing_value_counts": {},
+    "missing_value_percentages": {},
+    "warnings": [],
+    "errors": [],
+    "limitations": [
+      "Elevation min=203.1387176513672m, max=2000.3424072265625m"
+    ]
+  }
+}

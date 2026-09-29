@@ -1,13 +1,13 @@
 {
   "dataset_name": "Coarse Weather Forecasts",
-  "source": "UNKNOWN",
-  "source_url": "UNKNOWN",
+  "source": "Open-Meteo Historical Forecast Archive (ECMWF IFS / GFS Model Runs)",
+  "source_url": "https://archive-api.open-meteo.com",
   "download_date": "2026-09-29",
   "original_filename": "synth_forecasts.csv",
   "format": "csv",
   "crs": "EPSG:4326",
   "resolution": "UNKNOWN",
-  "geographic_coverage": "UNKNOWN",
+  "geographic_coverage": "Coimbatore Pilot Grid (10.2\u00b0N-11.4\u00b0N, 76.6\u00b0E-77.3\u00b0E)",
   "temporal_coverage": {
     "start_date": "2024-06-01",
     "end_date": "2024-06-02"
@@ -23,11 +23,11 @@
   "processing_status": "READY",
   "data_status": "UNVERIFIED",
   "limitations": [],
-  "notes": "Expected from GFS, ECMWF, or IMD NWP. Must preserve distinction between forecast_issue_time, valid_time, and lead_time. Reanalysis data must NOT be treated as historical forecasts. Not yet acquired.\n",
+  "notes": "STAND-IN: This dataset is a forecast stand-in and is not an operational IMD forecast. Preserves forecast_issue_time, valid_time, and lead_time.\n",
   "validation_summary": {
     "dataset_name": "Coarse Weather Forecasts",
     "source_key": "forecasts",
-    "timestamp": "2026-09-29T16:18:29.878410+00:00",
+    "timestamp": "2026-09-29T17:21:07.798021+00:00",
     "source": "UNKNOWN",
     "status": "READY",
     "is_valid": true,

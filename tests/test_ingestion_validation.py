@@ -519,7 +519,8 @@ class TestConfigValidation:
 
     def test_pilot_region_status(self, config_path):
         result = validate_config(config_path)
-        assert result["pilot_region"] == "NOT YET SELECTED"
+        assert result["pilot_region"] == "SELECTED"
+
 
     def test_directories_exist(self, config_path):
         result = validate_config(config_path)

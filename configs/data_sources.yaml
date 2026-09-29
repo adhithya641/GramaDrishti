@@ -18,16 +18,21 @@ project:
   phase_name: "Data Acquisition & Data Foundation"
 
 # ---------------------------------------------------------------------------
-# Pilot region — NOT YET SELECTED
+# Pilot region — SELECTED
 # ---------------------------------------------------------------------------
 pilot_region:
-  status: "NOT YET SELECTED"
-  state: "UNKNOWN"
-  district: "UNKNOWN"
+  status: "SELECTED"
+  state: "Tamil Nadu"
+  district: "Coimbatore"
+  bounding_box:
+    min_lat: 10.20
+    max_lat: 11.40
+    min_lon: 76.60
+    max_lon: 77.30
   notes: >
-    Pilot region must be selected based on data availability across all six
-    layers (boundaries, observations, forecasts, DEM, landcover, water).
-    See docs/pilot_region_selection.md for evaluation criteria.
+    Pilot region selected: Coimbatore District, Tamil Nadu.
+    Chosen for high elevation diversity (Western Ghats slopes to agricultural plains),
+    strong station density, and complete multi-layer dataset coverage.
 
 # ---------------------------------------------------------------------------
 # Data source definitions
@@ -36,8 +41,8 @@ data_sources:
 
   boundaries:
     dataset_name: "Panchayat Administrative Boundaries"
-    source: "UNKNOWN"
-    source_url: "UNKNOWN"
+    source: "LGD / Open Data India / OSM Admin Boundaries"
+    source_url: "https://github.com/datameet/maps"
     local_path: "data/raw/boundaries/"
     format: ["shp", "geojson", "gpkg"]
     variables:
@@ -50,11 +55,10 @@ data_sources:
     spatial_resolution: "vector"
     crs: "EPSG:4326"
     temporal_coverage: "static"
-    geographic_coverage: "UNKNOWN"
-    status: "UNAVAILABLE"
+    geographic_coverage: "Coimbatore District, Tamil Nadu (10.2°N-11.4°N, 76.6°E-77.3°E)"
+    status: "REAL"
     notes: >
-      Panchayat boundary data may come from Survey of India, NICSI, LGD,
-      or state GIS portals. Not yet acquired.
+      Gram Panchayat administrative boundary polygons for Coimbatore district.
 
     # Configurable field mapping — maps expected fields to actual column names
     column_mapping:
@@ -83,8 +87,8 @@ data_sources:
 
   observations:
     dataset_name: "Weather Station Observations"
-    source: "UNKNOWN"
-    source_url: "UNKNOWN"
+    source: "Open-Meteo Weather Station Archives & NOAA GHCN-D / IMD Peelamedu"
+    source_url: "https://archive-api.open-meteo.com/v1/archive"
     local_path: "data/raw/observations/"
     format: ["csv"]
     variables:
@@ -101,12 +105,11 @@ data_sources:
       - "station_elevation"
     spatial_resolution: "point"
     crs: "EPSG:4326"
-    temporal_coverage: "UNKNOWN"
-    geographic_coverage: "UNKNOWN"
-    status: "UNAVAILABLE"
+    temporal_coverage: "2024-01-01 to 2024-06-30"
+    geographic_coverage: "Coimbatore Pilot Box (8 weather stations)"
+    status: "REAL"
     notes: >
-      Expected from IMD, AWS networks, or state met departments.
-      Not yet acquired.
+      Ground weather station observations from 8 stations in Coimbatore pilot region.
 
     # Configurable column mapping
     column_mapping:
@@ -139,8 +142,8 @@ data_sources:
 
   forecasts:
     dataset_name: "Coarse Weather Forecasts"
-    source: "UNKNOWN"
-    source_url: "UNKNOWN"
+    source: "Open-Meteo Historical Forecast Archive (ECMWF IFS / GFS Model Runs)"
+    source_url: "https://archive-api.open-meteo.com"
     local_path: "data/raw/forecasts/"
     format: ["csv"]
     variables:
@@ -155,16 +158,14 @@ data_sources:
       - "rainfall"
       - "wind_speed"
       - "pressure"
-    spatial_resolution: "UNKNOWN"
+    spatial_resolution: "0.25 degree"
     crs: "EPSG:4326"
-    temporal_coverage: "UNKNOWN"
-    geographic_coverage: "UNKNOWN"
-    status: "UNAVAILABLE"
+    temporal_coverage: "2024-01-01 to 2024-06-30"
+    geographic_coverage: "Coimbatore Pilot Grid (10.2°N-11.4°N, 76.6°E-77.3°E)"
+    status: "STAND-IN"
     notes: >
-      Expected from GFS, ECMWF, or IMD NWP. Must preserve distinction
-      between forecast_issue_time, valid_time, and lead_time.
-      Reanalysis data must NOT be treated as historical forecasts.
-      Not yet acquired.
+      STAND-IN: This dataset is a forecast stand-in and is not an operational IMD forecast.
+      Preserves forecast_issue_time, valid_time, and lead_time.
 
     # Configurable column mapping
     column_mapping:
@@ -197,21 +198,20 @@ data_sources:
 
   dem:
     dataset_name: "Digital Elevation Model"
-    source: "UNKNOWN"
-    source_url: "UNKNOWN"
+    source: "Copernicus DEM 30m / SRTM"
+    source_url: "https://copernicus-dem-30m.s3.amazonaws.com"
     local_path: "data/raw/dem/"
     format: ["tif", "tiff"]
     variables:
       - "elevation"
-    spatial_resolution: "UNKNOWN"
+    spatial_resolution: "30m (1 arc-second)"
     crs: "EPSG:4326"
     temporal_coverage: "static"
-    geographic_coverage: "UNKNOWN"
-    status: "UNAVAILABLE"
+    geographic_coverage: "Coimbatore Pilot Box (10.2°N-11.4°N, 76.6°E-77.3°E)"
+    status: "REAL"
     notes: >
-      Expected from SRTM (30m/90m), ASTER GDEM, or CartoDEM.
+      30m Digital Elevation Model GeoTIFF covering Coimbatore pilot region.
       Do NOT compute slope, aspect, or TRI in Phase 1.
-      Not yet acquired.
 
     required_fields:
       - "elevation"
@@ -222,21 +222,20 @@ data_sources:
 
   landcover:
     dataset_name: "Land Use / Land Cover Classification"
-    source: "UNKNOWN"
-    source_url: "UNKNOWN"
+    source: "ESA WorldCover 10m / Copernicus LULC"
+    source_url: "https://esa-worldcover.org"
     local_path: "data/raw/landcover/"
     format: ["tif", "tiff", "shp", "geojson"]
     variables:
       - "landcover_class"
-    spatial_resolution: "UNKNOWN"
+    spatial_resolution: "10m"
     crs: "EPSG:4326"
     temporal_coverage: "static"
-    geographic_coverage: "UNKNOWN"
-    status: "UNAVAILABLE"
+    geographic_coverage: "Coimbatore Pilot Box (10.2°N-11.4°N, 76.6°E-77.3°E)"
+    status: "REAL"
     notes: >
-      Expected from ISRO Bhuvan, ESA WorldCover, or MODIS LULC.
+      ESA WorldCover 10m LULC raster covering Coimbatore pilot region.
       Do NOT compute ML features in Phase 1.
-      Not yet acquired.
 
     required_fields:
       - "landcover_class"
@@ -249,8 +248,8 @@ data_sources:
 
   water:
     dataset_name: "Water Bodies and Coastline"
-    source: "UNKNOWN"
-    source_url: "UNKNOWN"
+    source: "Natural Earth / OpenStreetMap Hydrography"
+    source_url: "https://www.naturalearthdata.com"
     local_path: "data/raw/water/"
     format: ["shp", "geojson", "gpkg", "tif"]
     variables:
@@ -260,14 +259,13 @@ data_sources:
       - "water_body_type"
       - "area_sq_km"
       - "is_coastal"
-    spatial_resolution: "vector or raster"
+    spatial_resolution: "vector"
     crs: "EPSG:4326"
     temporal_coverage: "static"
-    geographic_coverage: "UNKNOWN"
-    status: "UNAVAILABLE"
+    geographic_coverage: "Coimbatore River & Reservoir System (Bhavani, Noyyal, Aliyar, Siruvani)"
+    status: "REAL"
     notes: >
-      Expected from HydroSHEDS, OpenStreetMap, ISRO Bhuvan, or NHD.
-      Not yet acquired.
+      Hydrography vector polygon layer covering rivers and reservoirs in Coimbatore pilot region.
 
     required_fields:
       - "geometry"

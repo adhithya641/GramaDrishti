@@ -1,0 +1,30 @@
+{
+  "dataset_name": "Digital Elevation Model",
+  "source_key": "dem",
+  "timestamp": "2026-09-29T17:19:56.372762+00:00",
+  "source": "UNKNOWN",
+  "status": "READY",
+  "is_valid": true,
+  "file_format": "tif",
+  "crs_detected": "EPSG:4326",
+  "spatial_extent": {
+    "min_lon": 76.6,
+    "min_lat": 10.2,
+    "max_lon": 77.3,
+    "max_lat": 11.4
+  },
+  "temporal_extent": null,
+  "record_count": 120000,
+  "resolution": "0.0040x0.0030 deg (~30m)",
+  "fields_present": [
+    "elevation"
+  ],
+  "fields_missing": [],
+  "missing_value_counts": {},
+  "missing_value_percentages": {},
+  "warnings": [],
+  "errors": [],
+  "limitations": [
+    "Elevation min=203.1387176513672m, max=2000.3424072265625m"
+  ]
+}
