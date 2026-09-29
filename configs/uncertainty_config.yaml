@@ -1,0 +1,38 @@
+# GramDrishti Phase 5 - Uncertainty Quantification Configuration
+# SIH PS 26074 - Panchayat-Level Weather Downscaling
+
+project: GramDrishti
+phase: 5
+description: Uncertainty quantification using Quantile LightGBM and Conformal Calibration
+
+quantiles:
+  lower: 0.1
+  median: 0.5
+  upper: 0.9
+
+conformal:
+  alpha: 0.2  # 80% coverage (1 - (0.9 - 0.1))
+
+model_params:
+  metric: "quantile"
+  learning_rate: 0.05
+  n_estimators: 100
+  max_depth: 5
+  num_leaves: 15
+  min_child_samples: 10
+  subsample: 0.8
+  colsample_bytree: 0.8
+  random_state: 42
+  n_jobs: -1
+  verbose: -1
+
+reliability_thresholds:
+  temperature_width_medium: 3.0
+  temperature_width_low: 5.0
+  humidity_width_medium: 20.0
+  humidity_width_low: 40.0
+
+paths:
+  uncertainty_predictions_csv: "data/processed/predictions/uncertainty_predictions.csv"
+  models_dir: "data/processed/models/uncertainty/"
+  metrics_json: "data/metadata/validation_phase5_uncertainty.json"

@@ -1,0 +1,137 @@
+{
+    "record_counts": {
+        "total": 4320,
+        "train": 2136,
+        "calibration": 720,
+        "test": 1464
+    },
+    "conformal_corrections": {
+        "temperature": 1.0441649045825205,
+        "humidity": 3.802180761901287
+    },
+    "calibration_empirical_coverage": {
+        "temperature": 0.8013888888888889,
+        "humidity": 0.8013888888888889,
+        "target_coverage": 0.8
+    },
+    "test_empirical_coverage": {
+        "temperature": 0.8770491803278688,
+        "humidity": 0.20150273224043716,
+        "target_coverage": 0.8
+    },
+    "mean_interval_width_test": {
+        "temperature": 4.734259905064562,
+        "humidity": 27.608401919445132
+    },
+    "distributional_shift_analysis": {
+        "humidity_residual_mean_train": 4.419119850187266,
+        "humidity_residual_mean_calibration": 6.501152777777778,
+        "humidity_residual_mean_test": 25.034959016393437,
+        "shift_magnitude": 18.53380623861566,
+        "note": "Large positive shift in test-period humidity residuals (monsoon onset). Conformal calibration uses calibration-period scores, which do not capture this distributional shift. Low test coverage for humidity is a scientifically honest result."
+    },
+    "reliability_distribution_test": {
+        "temperature": {
+            "MEDIUM": 976,
+            "LOW": 486,
+            "HIGH": 2
+        },
+        "humidity": {
+            "MEDIUM": 1398,
+            "HIGH": 36,
+            "LOW": 30
+        }
+    },
+    "station_level_metrics": [
+        {
+            "station_id": "STN_CBE_01",
+            "n_records": 183,
+            "temp_coverage": 0.8907103825136612,
+            "hum_coverage": 0.16393442622950818,
+            "temp_mean_width": 3.992569135172776,
+            "hum_mean_width": 25.42483255400526
+        },
+        {
+            "station_id": "STN_CBE_02",
+            "n_records": 183,
+            "temp_coverage": 0.9180327868852459,
+            "hum_coverage": 0.13114754098360656,
+            "temp_mean_width": 4.492363802493111,
+            "hum_mean_width": 26.275793961475745
+        },
+        {
+            "station_id": "STN_CBE_03",
+            "n_records": 183,
+            "temp_coverage": 0.9234972677595629,
+            "hum_coverage": 0.15300546448087432,
+            "temp_mean_width": 4.8483193468752095,
+            "hum_mean_width": 24.386413483137307
+        },
+        {
+            "station_id": "STN_CBE_04",
+            "n_records": 183,
+            "temp_coverage": 0.8743169398907104,
+            "hum_coverage": 0.28415300546448086,
+            "temp_mean_width": 5.267844422117914,
+            "hum_mean_width": 27.477903397746335
+        },
+        {
+            "station_id": "STN_CBE_05",
+            "n_records": 183,
+            "temp_coverage": 0.8688524590163934,
+            "hum_coverage": 0.3224043715846995,
+            "temp_mean_width": 5.113565595551444,
+            "hum_mean_width": 27.762393389660836
+        },
+        {
+            "station_id": "STN_CBE_06",
+            "n_records": 183,
+            "temp_coverage": 0.7486338797814208,
+            "hum_coverage": 0.3333333333333333,
+            "temp_mean_width": 5.460671522330863,
+            "hum_mean_width": 35.65535851479232
+        },
+        {
+            "station_id": "STN_CBE_07",
+            "n_records": 183,
+            "temp_coverage": 0.8743169398907104,
+            "hum_coverage": 0.08196721311475409,
+            "temp_mean_width": 3.972273532684935,
+            "hum_mean_width": 25.819749737353575
+        },
+        {
+            "station_id": "STN_CBE_08",
+            "n_records": 183,
+            "temp_coverage": 0.9180327868852459,
+            "hum_coverage": 0.14207650273224043,
+            "temp_mean_width": 4.726471883290235,
+            "hum_mean_width": 28.064770317389637
+        }
+    ],
+    "lead_time_level_metrics": [
+        {
+            "lead_time_hours": 24,
+            "n_records": 488,
+            "temp_coverage": 0.9098360655737705,
+            "hum_coverage": 0.2192622950819672,
+            "temp_mean_width": 4.548887098707376,
+            "hum_mean_width": 27.676122213870325
+        },
+        {
+            "lead_time_hours": 48,
+            "n_records": 488,
+            "temp_coverage": 0.8565573770491803,
+            "hum_coverage": 0.1885245901639344,
+            "temp_mean_width": 4.6829796253794225,
+            "hum_mean_width": 27.574597867269734
+        },
+        {
+            "lead_time_hours": 72,
+            "n_records": 488,
+            "temp_coverage": 0.8647540983606558,
+            "hum_coverage": 0.19672131147540983,
+            "temp_mean_width": 4.970912991106884,
+            "hum_mean_width": 27.574485677195323
+        }
+    ]
+}
