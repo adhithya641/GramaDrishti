@@ -1,0 +1,28 @@
+{
+  "dataset_name": "Land Use / Land Cover Classification",
+  "source_key": "landcover",
+  "timestamp": "2026-09-29T17:19:58.053339+00:00",
+  "source": "UNKNOWN",
+  "status": "READY",
+  "is_valid": true,
+  "file_format": "tif",
+  "crs_detected": "EPSG:4326",
+  "spatial_extent": {
+    "min_lon": 76.6,
+    "min_lat": 10.2,
+    "max_lon": 77.3,
+    "max_lat": 11.4
+  },
+  "temporal_extent": null,
+  "record_count": 120000,
+  "resolution": "0.0040x0.0030 deg (~10m)",
+  "fields_present": [
+    "landcover_class"
+  ],
+  "fields_missing": [],
+  "missing_value_counts": {},
+  "missing_value_percentages": {},
+  "warnings": [],
+  "errors": [],
+  "limitations": []
+}

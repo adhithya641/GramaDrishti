@@ -1,0 +1,48 @@
+{
+  "dataset_name": "Water Bodies and Coastline",
+  "source": "Natural Earth / OpenStreetMap Hydrography",
+  "source_url": "https://www.naturalearthdata.com",
+  "download_date": "2026-09-29",
+  "original_filename": "coimbatore_water_bodies.geojson",
+  "format": "geojson",
+  "crs": "EPSG:4326",
+  "resolution": "UNKNOWN",
+  "geographic_coverage": "Coimbatore River & Reservoir System (Bhavani, Noyyal, Aliyar, Siruvani)",
+  "temporal_coverage": "UNKNOWN",
+  "variables": [
+    "geometry"
+  ],
+  "record_count": 7,
+  "processing_status": "READY",
+  "data_status": "UNVERIFIED",
+  "limitations": [],
+  "notes": "Hydrography vector polygon layer covering rivers and reservoirs in Coimbatore pilot region.\n",
+  "validation_summary": {
+    "dataset_name": "Water Bodies and Coastline",
+    "source_key": "water",
+    "timestamp": "2026-09-29T17:19:58.723570+00:00",
+    "source": "UNKNOWN",
+    "status": "READY",
+    "is_valid": true,
+    "file_format": "geojson",
+    "crs_detected": "EPSG:4326",
+    "spatial_extent": {
+      "min_lon": 76.67,
+      "min_lat": 10.45,
+      "max_lon": 77.29,
+      "max_lat": 11.37
+    },
+    "temporal_extent": null,
+    "record_count": 7,
+    "resolution": null,
+    "fields_present": [
+      "geometry"
+    ],
+    "fields_missing": [],
+    "missing_value_counts": {},
+    "missing_value_percentages": {},
+    "warnings": [],
+    "errors": [],
+    "limitations": []
+  }
+}

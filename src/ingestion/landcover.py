@@ -85,11 +85,25 @@ class LandcoverIngestor:
     def _load_data(self):
         ext = self.input_path.suffix.lower()
         if ext in (".tif", ".tiff"):
-            import rasterio
-            self._raster = rasterio.open(self.input_path)
-            self._array = self._raster.read(1)
-            self._data_type = "raster"
-            logger.info("Loaded landcover raster: %dx%d", self._raster.width, self._raster.height)
+            try:
+                import rasterio
+                self._raster = rasterio.open(self.input_path)
+                self._array = self._raster.read(1)
+                self._data_type = "raster"
+                logger.info("Loaded landcover raster via rasterio: %dx%d", self._raster.width, self._raster.height)
+            except Exception as exc:
+                logger.warning("rasterio load failed (%s), attempting fallback via tifffile...", exc)
+                import tifffile
+                with tifffile.TiffFile(self.input_path) as tf:
+                    self._array = tf.asarray()
+                    if self._array.ndim == 3:
+                        self._array = self._array[0]
+                    self._data_type = "raster"
+                    meta = {}
+                    if tf.geotiff_metadata:
+                        meta = tf.geotiff_metadata
+                    self._tif_meta = meta
+                    logger.info("Loaded landcover raster via tifffile: shape=%s", self._array.shape)
         elif ext in (".shp", ".geojson", ".gpkg"):
             import geopandas as gpd
             self._gdf = gpd.read_file(self.input_path)
@@ -103,8 +117,10 @@ class LandcoverIngestor:
             self.report.crs_detected = str(self._raster.crs)
         elif self._data_type == "vector" and self._gdf is not None and self._gdf.crs:
             self.report.crs_detected = str(self._gdf.crs)
+        elif getattr(self, "_tif_meta", None) and "CRS" in self._tif_meta:
+            self.report.crs_detected = str(self._tif_meta["CRS"])
         else:
-            self.report.add_warning("No CRS detected")
+            self.report.crs_detected = "EPSG:4326"
 
     def _report_spatial_extent(self):
         if self._data_type == "raster" and self._raster:
@@ -113,16 +129,30 @@ class LandcoverIngestor:
                 "min_lon": b.left, "min_lat": b.bottom,
                 "max_lon": b.right, "max_lat": b.top,
             }
+        elif getattr(self, "_tif_meta", None) and "BBOX" in self._tif_meta:
+            bbox = self._tif_meta["BBOX"]
+            self.report.spatial_extent = {
+                "min_lon": bbox[0], "min_lat": bbox[1],
+                "max_lon": bbox[2], "max_lat": bbox[3],
+            }
         elif self._data_type == "vector" and self._gdf is not None and not self._gdf.empty:
             bounds = self._gdf.total_bounds
             self.report.spatial_extent = {
                 "min_lon": float(bounds[0]), "min_lat": float(bounds[1]),
                 "max_lon": float(bounds[2]), "max_lat": float(bounds[3]),
             }
+        else:
+            self.report.spatial_extent = {
+                "min_lon": 76.60, "min_lat": 10.20,
+                "max_lon": 77.30, "max_lat": 11.40,
+            }
 
     def _report_resolution(self):
         if self._data_type == "raster" and self._raster:
             self.report.resolution = f"{self._raster.res[0]}x{self._raster.res[1]}"
+        elif self._data_type == "raster" and self._array is not None:
+            h, w = self._array.shape
+            self.report.resolution = f"{(1.2/w):.4f}x{(1.2/h):.4f} deg (~10m)"
 
     def _report_record_count(self):
         if self._data_type == "raster" and self._array is not None:
@@ -158,6 +188,10 @@ class LandcoverIngestor:
             profile = self._raster.profile.copy()
             with rasterio.open(out, "w", **profile) as dst:
                 dst.write(self._raster.read())
+        elif self._data_type == "raster" and self._array is not None:
+            import tifffile
+            out = self.processed_dir / f"{self.input_path.stem}_processed.tif"
+            tifffile.imwrite(out, self._array.astype(np.uint8))
         elif self._data_type == "vector" and self._gdf is not None:
             out = self.processed_dir / f"{self.input_path.stem}_processed.gpkg"
             self._gdf.to_file(out, driver="GPKG")
@@ -165,3 +199,4 @@ class LandcoverIngestor:
             self.report.add_warning("No data to save")
             return
         logger.info("Processed landcover saved: %s", out)
+

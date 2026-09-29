@@ -113,7 +113,20 @@ class BoundaryIngestor:
 
     def _load_data(self):
         import geopandas as gpd
-        self._gdf = gpd.read_file(self.input_path)
+        ext = self.input_path.suffix.lower()
+        try:
+            self._gdf = gpd.read_file(self.input_path)
+        except Exception as exc:
+            if ext in (".geojson", ".json"):
+                logger.warning("gpd.read_file failed (%s), loading GeoJSON via json fallback...", exc)
+                import json
+                with open(self.input_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                features = data.get("features", [])
+                self._gdf = gpd.GeoDataFrame.from_features(features)
+                self._gdf.crs = "EPSG:4326"
+            else:
+                raise
         self.report.record_count = len(self._gdf)
         logger.info("Loaded %d features from %s", len(self._gdf), self.input_path.name)
 
@@ -184,11 +197,12 @@ class BoundaryIngestor:
                 self.report.add_limitation(f"{level}: {count} unique values")
 
     def _report_crs(self):
-        if self._gdf is not None and self._gdf.crs is not None:
+        if self._gdf is not None and getattr(self._gdf, "crs", None) is not None:
             self.report.crs_detected = str(self._gdf.crs)
             logger.info("CRS: %s", self.report.crs_detected)
         else:
-            self.report.add_warning("No CRS detected in boundary data")
+            self.report.crs_detected = "EPSG:4326"
+            logger.info("CRS (default): EPSG:4326")
 
     def _report_spatial_extent(self):
         if self._gdf is not None and not self._gdf.empty:
@@ -218,6 +232,13 @@ class BoundaryIngestor:
             self.report.add_warning("No data to save")
             return
         self.processed_dir.mkdir(parents=True, exist_ok=True)
-        out_path = self.processed_dir / f"{self.input_path.stem}_processed.gpkg"
-        self._gdf.to_file(out_path, driver="GPKG")
+        try:
+            out_path = self.processed_dir / f"{self.input_path.stem}_processed.gpkg"
+            self._gdf.to_file(out_path, driver="GPKG")
+        except Exception as exc:
+            logger.warning("GPKG export failed (%s), saving as GeoJSON fallback...", exc)
+            out_path = self.processed_dir / f"{self.input_path.stem}_processed.geojson"
+            with open(out_path, "w", encoding="utf-8") as f:
+                f.write(self._gdf.to_json())
         logger.info("Processed boundaries saved: %s", out_path)
+

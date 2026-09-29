@@ -1,0 +1,764 @@
+{
+  "record_counts": {
+    "train": 2136,
+    "calibration": 720,
+    "test": 1464,
+    "total": 4320
+  },
+  "data_audit": {
+    "total_records": 4320,
+    "missing_observed_rainfall": 0,
+    "negative_observed_rainfall": 0,
+    "impossible_observed_rainfall": 0,
+    "duplicate_records": 0,
+    "unique_stations": 8,
+    "station_list": [
+      "STN_CBE_01",
+      "STN_CBE_02",
+      "STN_CBE_03",
+      "STN_CBE_04",
+      "STN_CBE_05",
+      "STN_CBE_06",
+      "STN_CBE_07",
+      "STN_CBE_08"
+    ],
+    "clean_data": true
+  },
+  "event_summary": {
+    "rain_1mm": {
+      "TRAIN": {
+        "total": 2136,
+        "events": 15,
+        "non_events": 2121,
+        "event_rate": 0.007022471910112359,
+        "event_rate_pct": 0.7022471910112359
+      },
+      "CALIBRATION": {
+        "total": 720,
+        "events": 9,
+        "non_events": 711,
+        "event_rate": 0.0125,
+        "event_rate_pct": 1.25
+      },
+      "TEST": {
+        "total": 1464,
+        "events": 165,
+        "non_events": 1299,
+        "event_rate": 0.11270491803278689,
+        "event_rate_pct": 11.270491803278688
+      }
+    },
+    "rain_10mm": {
+      "TRAIN": {
+        "total": 2136,
+        "events": 0,
+        "non_events": 2136,
+        "event_rate": 0.0,
+        "event_rate_pct": 0.0
+      },
+      "CALIBRATION": {
+        "total": 720,
+        "events": 0,
+        "non_events": 720,
+        "event_rate": 0.0,
+        "event_rate_pct": 0.0
+      },
+      "TEST": {
+        "total": 1464,
+        "events": 6,
+        "non_events": 1458,
+        "event_rate": 0.004098360655737705,
+        "event_rate_pct": 0.4098360655737705
+      }
+    },
+    "rain_25mm": {
+      "TRAIN": {
+        "total": 2136,
+        "events": 0,
+        "non_events": 2136,
+        "event_rate": 0.0,
+        "event_rate_pct": 0.0
+      },
+      "CALIBRATION": {
+        "total": 720,
+        "events": 0,
+        "non_events": 720,
+        "event_rate": 0.0,
+        "event_rate_pct": 0.0
+      },
+      "TEST": {
+        "total": 1464,
+        "events": 0,
+        "non_events": 1464,
+        "event_rate": 0.0,
+        "event_rate_pct": 0.0
+      }
+    }
+  },
+  "test_metrics": [
+    {
+      "model": "R0 Climatology",
+      "threshold": "rain_1mm",
+      "split": "TEST",
+      "records": 1464,
+      "event_count": 165,
+      "observed_rate": 0.11270491803278689,
+      "predicted_prob_mean": 0.007022471910112361,
+      "brier_score": 0.11117129890248169,
+      "pod": 0.0,
+      "far": 0.0,
+      "csi": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 165,
+      "tn": 1299
+    },
+    {
+      "model": "R1 Logistic Regression",
+      "threshold": "rain_1mm",
+      "split": "TEST",
+      "records": 1464,
+      "event_count": 165,
+      "observed_rate": 0.11270491803278689,
+      "predicted_prob_mean": 0.5049265503467533,
+      "brier_score": 0.3772018601133015,
+      "pod": 0.46060606060606063,
+      "far": 0.8951724137931034,
+      "csi": 0.09336609336609336,
+      "tp": 76,
+      "fp": 649,
+      "fn": 89,
+      "tn": 650
+    },
+    {
+      "model": "R2 LightGBM Raw",
+      "threshold": "rain_1mm",
+      "split": "TEST",
+      "records": 1464,
+      "event_count": 165,
+      "observed_rate": 0.11270491803278689,
+      "predicted_prob_mean": 0.001932624433253331,
+      "brier_score": 0.11250146210057467,
+      "pod": 0.0,
+      "far": 0.0,
+      "csi": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 165,
+      "tn": 1299
+    },
+    {
+      "model": "R2 LightGBM Calibrated",
+      "threshold": "rain_1mm",
+      "split": "TEST",
+      "records": 1464,
+      "event_count": 165,
+      "observed_rate": 0.11270491803278689,
+      "predicted_prob_mean": 0.009478431026916659,
+      "brier_score": 0.11146596857987637,
+      "pod": 0.0,
+      "far": 0.0,
+      "csi": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 165,
+      "tn": 1299
+    },
+    {
+      "model": "R0 Climatology",
+      "threshold": "rain_10mm",
+      "split": "TEST",
+      "records": 1464,
+      "event_count": 6,
+      "observed_rate": 0.004098360655737705,
+      "predicted_prob_mean": 0.0,
+      "brier_score": 0.004098360655737705,
+      "pod": 0.0,
+      "far": 0.0,
+      "csi": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 6,
+      "tn": 1458
+    },
+    {
+      "model": "R1 Logistic Regression",
+      "threshold": "rain_10mm",
+      "split": "TEST",
+      "records": 1464,
+      "event_count": 6,
+      "observed_rate": 0.004098360655737705,
+      "predicted_prob_mean": 0.0,
+      "brier_score": 0.004098360655737705,
+      "pod": 0.0,
+      "far": 0.0,
+      "csi": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 6,
+      "tn": 1458
+    },
+    {
+      "model": "R2 LightGBM Raw",
+      "threshold": "rain_10mm",
+      "split": "TEST",
+      "records": 1464,
+      "event_count": 6,
+      "observed_rate": 0.004098360655737705,
+      "predicted_prob_mean": 0.0,
+      "brier_score": 0.004098360655737705,
+      "pod": 0.0,
+      "far": 0.0,
+      "csi": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 6,
+      "tn": 1458
+    },
+    {
+      "model": "R2 LightGBM Calibrated",
+      "threshold": "rain_10mm",
+      "split": "TEST",
+      "records": 1464,
+      "event_count": 6,
+      "observed_rate": 0.004098360655737705,
+      "predicted_prob_mean": 0.0,
+      "brier_score": 0.004098360655737705,
+      "pod": 0.0,
+      "far": 0.0,
+      "csi": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 6,
+      "tn": 1458
+    },
+    {
+      "model": "R0 Climatology",
+      "threshold": "rain_25mm",
+      "split": "TEST",
+      "records": 1464,
+      "event_count": 0,
+      "observed_rate": 0.0,
+      "predicted_prob_mean": 0.0,
+      "brier_score": 0.0,
+      "pod": 0.0,
+      "far": 0.0,
+      "csi": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1464
+    },
+    {
+      "model": "R1 Logistic Regression",
+      "threshold": "rain_25mm",
+      "split": "TEST",
+      "records": 1464,
+      "event_count": 0,
+      "observed_rate": 0.0,
+      "predicted_prob_mean": 0.0,
+      "brier_score": 0.0,
+      "pod": 0.0,
+      "far": 0.0,
+      "csi": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1464
+    },
+    {
+      "model": "R2 LightGBM Raw",
+      "threshold": "rain_25mm",
+      "split": "TEST",
+      "records": 1464,
+      "event_count": 0,
+      "observed_rate": 0.0,
+      "predicted_prob_mean": 0.0,
+      "brier_score": 0.0,
+      "pod": 0.0,
+      "far": 0.0,
+      "csi": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1464
+    },
+    {
+      "model": "R2 LightGBM Calibrated",
+      "threshold": "rain_25mm",
+      "split": "TEST",
+      "records": 1464,
+      "event_count": 0,
+      "observed_rate": 0.0,
+      "predicted_prob_mean": 0.0,
+      "brier_score": 0.0,
+      "pod": 0.0,
+      "far": 0.0,
+      "csi": 0.0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "tn": 1464
+    }
+  ],
+  "reliability_curves": {
+    "rain_1mm": {
+      "R0": [
+        {
+          "bin_lower": 0.0,
+          "bin_upper": 0.2,
+          "count": 1464,
+          "mean_pred_prob": 0.007022471910112361,
+          "mean_observed_rate": 0.11270491803278689
+        },
+        {
+          "bin_lower": 0.2,
+          "bin_upper": 0.4,
+          "count": 0,
+          "mean_pred_prob": 0.30000000000000004,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.4,
+          "bin_upper": 0.6000000000000001,
+          "count": 0,
+          "mean_pred_prob": 0.5,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.8,
+          "count": 0,
+          "mean_pred_prob": 0.7000000000000001,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.8,
+          "bin_upper": 1.0,
+          "count": 0,
+          "mean_pred_prob": 0.9,
+          "mean_observed_rate": 0.0
+        }
+      ],
+      "R1": [
+        {
+          "bin_lower": 0.0,
+          "bin_upper": 0.2,
+          "count": 405,
+          "mean_pred_prob": 0.07926773295609829,
+          "mean_observed_rate": 0.12098765432098765
+        },
+        {
+          "bin_lower": 0.2,
+          "bin_upper": 0.4,
+          "count": 231,
+          "mean_pred_prob": 0.2937699984769419,
+          "mean_observed_rate": 0.09956709956709957
+        },
+        {
+          "bin_lower": 0.4,
+          "bin_upper": 0.6000000000000001,
+          "count": 179,
+          "mean_pred_prob": 0.49502567876034037,
+          "mean_observed_rate": 0.16759776536312848
+        },
+        {
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.8,
+          "count": 212,
+          "mean_pred_prob": 0.7006650042122222,
+          "mean_observed_rate": 0.08018867924528301
+        },
+        {
+          "bin_lower": 0.8,
+          "bin_upper": 1.0,
+          "count": 437,
+          "mean_pred_prob": 0.9201317867761128,
+          "mean_observed_rate": 0.10526315789473684
+        }
+      ],
+      "R2_Raw": [
+        {
+          "bin_lower": 0.0,
+          "bin_upper": 0.2,
+          "count": 1464,
+          "mean_pred_prob": 0.001932624433253331,
+          "mean_observed_rate": 0.11270491803278689
+        },
+        {
+          "bin_lower": 0.2,
+          "bin_upper": 0.4,
+          "count": 0,
+          "mean_pred_prob": 0.30000000000000004,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.4,
+          "bin_upper": 0.6000000000000001,
+          "count": 0,
+          "mean_pred_prob": 0.5,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.8,
+          "count": 0,
+          "mean_pred_prob": 0.7000000000000001,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.8,
+          "bin_upper": 1.0,
+          "count": 0,
+          "mean_pred_prob": 0.9,
+          "mean_observed_rate": 0.0
+        }
+      ],
+      "R2_Calibrated": [
+        {
+          "bin_lower": 0.0,
+          "bin_upper": 0.2,
+          "count": 1464,
+          "mean_pred_prob": 0.009478431026916659,
+          "mean_observed_rate": 0.11270491803278689
+        },
+        {
+          "bin_lower": 0.2,
+          "bin_upper": 0.4,
+          "count": 0,
+          "mean_pred_prob": 0.30000000000000004,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.4,
+          "bin_upper": 0.6000000000000001,
+          "count": 0,
+          "mean_pred_prob": 0.5,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.8,
+          "count": 0,
+          "mean_pred_prob": 0.7000000000000001,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.8,
+          "bin_upper": 1.0,
+          "count": 0,
+          "mean_pred_prob": 0.9,
+          "mean_observed_rate": 0.0
+        }
+      ]
+    },
+    "rain_10mm": {
+      "R0": [
+        {
+          "bin_lower": 0.0,
+          "bin_upper": 0.2,
+          "count": 1464,
+          "mean_pred_prob": 0.0,
+          "mean_observed_rate": 0.004098360655737705
+        },
+        {
+          "bin_lower": 0.2,
+          "bin_upper": 0.4,
+          "count": 0,
+          "mean_pred_prob": 0.30000000000000004,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.4,
+          "bin_upper": 0.6000000000000001,
+          "count": 0,
+          "mean_pred_prob": 0.5,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.8,
+          "count": 0,
+          "mean_pred_prob": 0.7000000000000001,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.8,
+          "bin_upper": 1.0,
+          "count": 0,
+          "mean_pred_prob": 0.9,
+          "mean_observed_rate": 0.0
+        }
+      ],
+      "R1": [
+        {
+          "bin_lower": 0.0,
+          "bin_upper": 0.2,
+          "count": 1464,
+          "mean_pred_prob": 0.0,
+          "mean_observed_rate": 0.004098360655737705
+        },
+        {
+          "bin_lower": 0.2,
+          "bin_upper": 0.4,
+          "count": 0,
+          "mean_pred_prob": 0.30000000000000004,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.4,
+          "bin_upper": 0.6000000000000001,
+          "count": 0,
+          "mean_pred_prob": 0.5,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.8,
+          "count": 0,
+          "mean_pred_prob": 0.7000000000000001,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.8,
+          "bin_upper": 1.0,
+          "count": 0,
+          "mean_pred_prob": 0.9,
+          "mean_observed_rate": 0.0
+        }
+      ],
+      "R2_Raw": [
+        {
+          "bin_lower": 0.0,
+          "bin_upper": 0.2,
+          "count": 1464,
+          "mean_pred_prob": 0.0,
+          "mean_observed_rate": 0.004098360655737705
+        },
+        {
+          "bin_lower": 0.2,
+          "bin_upper": 0.4,
+          "count": 0,
+          "mean_pred_prob": 0.30000000000000004,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.4,
+          "bin_upper": 0.6000000000000001,
+          "count": 0,
+          "mean_pred_prob": 0.5,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.8,
+          "count": 0,
+          "mean_pred_prob": 0.7000000000000001,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.8,
+          "bin_upper": 1.0,
+          "count": 0,
+          "mean_pred_prob": 0.9,
+          "mean_observed_rate": 0.0
+        }
+      ],
+      "R2_Calibrated": [
+        {
+          "bin_lower": 0.0,
+          "bin_upper": 0.2,
+          "count": 1464,
+          "mean_pred_prob": 0.0,
+          "mean_observed_rate": 0.004098360655737705
+        },
+        {
+          "bin_lower": 0.2,
+          "bin_upper": 0.4,
+          "count": 0,
+          "mean_pred_prob": 0.30000000000000004,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.4,
+          "bin_upper": 0.6000000000000001,
+          "count": 0,
+          "mean_pred_prob": 0.5,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.8,
+          "count": 0,
+          "mean_pred_prob": 0.7000000000000001,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.8,
+          "bin_upper": 1.0,
+          "count": 0,
+          "mean_pred_prob": 0.9,
+          "mean_observed_rate": 0.0
+        }
+      ]
+    },
+    "rain_25mm": {
+      "R0": [
+        {
+          "bin_lower": 0.0,
+          "bin_upper": 0.2,
+          "count": 1464,
+          "mean_pred_prob": 0.0,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.2,
+          "bin_upper": 0.4,
+          "count": 0,
+          "mean_pred_prob": 0.30000000000000004,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.4,
+          "bin_upper": 0.6000000000000001,
+          "count": 0,
+          "mean_pred_prob": 0.5,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.8,
+          "count": 0,
+          "mean_pred_prob": 0.7000000000000001,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.8,
+          "bin_upper": 1.0,
+          "count": 0,
+          "mean_pred_prob": 0.9,
+          "mean_observed_rate": 0.0
+        }
+      ],
+      "R1": [
+        {
+          "bin_lower": 0.0,
+          "bin_upper": 0.2,
+          "count": 1464,
+          "mean_pred_prob": 0.0,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.2,
+          "bin_upper": 0.4,
+          "count": 0,
+          "mean_pred_prob": 0.30000000000000004,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.4,
+          "bin_upper": 0.6000000000000001,
+          "count": 0,
+          "mean_pred_prob": 0.5,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.8,
+          "count": 0,
+          "mean_pred_prob": 0.7000000000000001,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.8,
+          "bin_upper": 1.0,
+          "count": 0,
+          "mean_pred_prob": 0.9,
+          "mean_observed_rate": 0.0
+        }
+      ],
+      "R2_Raw": [
+        {
+          "bin_lower": 0.0,
+          "bin_upper": 0.2,
+          "count": 1464,
+          "mean_pred_prob": 0.0,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.2,
+          "bin_upper": 0.4,
+          "count": 0,
+          "mean_pred_prob": 0.30000000000000004,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.4,
+          "bin_upper": 0.6000000000000001,
+          "count": 0,
+          "mean_pred_prob": 0.5,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.8,
+          "count": 0,
+          "mean_pred_prob": 0.7000000000000001,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.8,
+          "bin_upper": 1.0,
+          "count": 0,
+          "mean_pred_prob": 0.9,
+          "mean_observed_rate": 0.0
+        }
+      ],
+      "R2_Calibrated": [
+        {
+          "bin_lower": 0.0,
+          "bin_upper": 0.2,
+          "count": 1464,
+          "mean_pred_prob": 0.0,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.2,
+          "bin_upper": 0.4,
+          "count": 0,
+          "mean_pred_prob": 0.30000000000000004,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.4,
+          "bin_upper": 0.6000000000000001,
+          "count": 0,
+          "mean_pred_prob": 0.5,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.8,
+          "count": 0,
+          "mean_pred_prob": 0.7000000000000001,
+          "mean_observed_rate": 0.0
+        },
+        {
+          "bin_lower": 0.8,
+          "bin_upper": 1.0,
+          "count": 0,
+          "mean_pred_prob": 0.9,
+          "mean_observed_rate": 0.0
+        }
+      ]
+    }
+  },
+  "panchayat_aggregation_stats": {
+    "total_records": 32940,
+    "unique_panchayats": 180,
+    "status_counts": {
+      "OK": 32574,
+      "SUBGRID_RANGE_UNRESOLVED": 366
+    }
+  }
+}

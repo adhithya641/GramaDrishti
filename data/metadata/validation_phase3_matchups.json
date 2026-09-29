@@ -1,0 +1,18 @@
+{
+  "total_records": 4320,
+  "is_valid": true,
+  "issues": [],
+  "warnings": [],
+  "summary": {
+    "qc_breakdown": {
+      "VALID": 4320
+    },
+    "future_leakage_check": "PASS: Static GIS features and past issue_time only",
+    "b1_statuses": {
+      "INTERPOLATED": 2700,
+      "FALLBACK_B0": 1620
+    },
+    "b2_temp_mean": 25.505532407407404,
+    "b3_calibration": "Fitted strictly on TRAIN split (2024-01-01 to 2024-03-31)"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "dataset_name": "Land Use / Land Cover Classification",
+  "source": "ESA WorldCover 10m / Copernicus LULC",
+  "source_url": "https://esa-worldcover.org",
+  "download_date": "2026-09-29",
+  "original_filename": "coimbatore_landcover_10m.tif",
+  "format": "tif",
+  "crs": "EPSG:4326",
+  "resolution": "0.0040x0.0030 deg (~10m)",
+  "geographic_coverage": "Coimbatore Pilot Box (10.2\u00b0N-11.4\u00b0N, 76.6\u00b0E-77.3\u00b0E)",
+  "temporal_coverage": "UNKNOWN",
+  "variables": [
+    "landcover_class"
+  ],
+  "record_count": 120000,
+  "processing_status": "READY",
+  "data_status": "UNVERIFIED",
+  "limitations": [],
+  "notes": "ESA WorldCover 10m LULC raster covering Coimbatore pilot region. Do NOT compute ML features in Phase 1.\n",
+  "validation_summary": {
+    "dataset_name": "Land Use / Land Cover Classification",
+    "source_key": "landcover",
+    "timestamp": "2026-09-29T17:19:58.053339+00:00",
+    "source": "UNKNOWN",
+    "status": "READY",
+    "is_valid": true,
+    "file_format": "tif",
+    "crs_detected": "EPSG:4326",
+    "spatial_extent": {
+      "min_lon": 76.6,
+      "min_lat": 10.2,
+      "max_lon": 77.3,
+      "max_lat": 11.4
+    },
+    "temporal_extent": null,
+    "record_count": 120000,
+    "resolution": "0.0040x0.0030 deg (~10m)",
+    "fields_present": [
+      "landcover_class"
+    ],
+    "fields_missing": [],
+    "missing_value_counts": {},
+    "missing_value_percentages": {},
+    "warnings": [],
+    "errors": [],
+    "limitations": []
+  }
+}

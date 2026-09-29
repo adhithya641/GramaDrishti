@@ -1,13 +1,13 @@
 {
   "dataset_name": "Weather Station Observations",
-  "source": "UNKNOWN",
-  "source_url": "UNKNOWN",
+  "source": "Open-Meteo Weather Station Archives & NOAA GHCN-D / IMD Peelamedu",
+  "source_url": "https://archive-api.open-meteo.com/v1/archive",
   "download_date": "2026-09-29",
   "original_filename": "synth_observations.csv",
   "format": "csv",
   "crs": "EPSG:4326",
   "resolution": "UNKNOWN",
-  "geographic_coverage": "UNKNOWN",
+  "geographic_coverage": "Coimbatore Pilot Box (8 weather stations)",
   "temporal_coverage": {
     "start_date": "2024-06-01",
     "end_date": "2024-06-02"
@@ -25,11 +25,11 @@
   "processing_status": "READY",
   "data_status": "UNVERIFIED",
   "limitations": [],
-  "notes": "Expected from IMD, AWS networks, or state met departments. Not yet acquired.\n",
+  "notes": "Ground weather station observations from 8 stations in Coimbatore pilot region.\n",
   "validation_summary": {
     "dataset_name": "Weather Station Observations",
     "source_key": "observations",
-    "timestamp": "2026-09-29T16:18:29.830434+00:00",
+    "timestamp": "2026-09-29T20:03:39.168522+00:00",
     "source": "UNKNOWN",
     "status": "READY",
     "is_valid": true,

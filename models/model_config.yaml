@@ -1,0 +1,87 @@
+description: LightGBM residual correction configuration for temperature and humidity
+features:
+  categorical:
+  - dominant_landcover_class
+  forecast:
+  - forecast_temperature
+  - forecast_humidity
+  - forecast_rainfall
+  - lead_time_hours
+  geospatial:
+  - elevation_mean
+  - elevation_std
+  - elevation_range
+  - slope_mean
+  - slope_std
+  - aspect_sin
+  - aspect_cos
+  - tri_mean
+  - tri_std
+  - landcover_fraction_tree
+  - landcover_fraction_shrub
+  - landcover_fraction_grass
+  - landcover_fraction_cropland
+  - landcover_fraction_builtup
+  - landcover_fraction_water
+  - distance_to_nearest_water
+  - distance_to_forecast_grid_m
+  temporal:
+  - day_of_year_sin
+  - day_of_year_cos
+  - month
+model_params:
+  colsample_bytree: 0.8
+  learning_rate: 0.05
+  max_depth: 5
+  metric: rmse
+  min_child_samples: 10
+  n_estimators: 100
+  n_jobs: -1
+  num_leaves: 15
+  objective: regression
+  random_state: 42
+  subsample: 0.8
+  verbose: -1
+paths:
+  geospatial_master_csv: data/processed/geospatial/geospatial_features_master.csv
+  matchups_csv: data/processed/matchups/weather_matchups.csv
+  models_dir: models/
+  predictions_csv: data/processed/predictions/weather_predictions.csv
+  processed_models_dir: data/processed/models/
+  validation_json: data/metadata/validation_phase4_ml.json
+phase: 4
+project: GramDrishti
+strictly_forbidden_features:
+- station_id
+- station_group
+- latitude_obs
+- longitude_obs
+- observed_temperature
+- observed_humidity
+- observed_rainfall
+- residual_temperature
+- residual_humidity
+- b0_temperature
+- b0_humidity
+- b1_temperature
+- b1_humidity
+- b3_temperature
+- b3_humidity
+targets:
+  humidity:
+    baseline_col: b2_humidity
+    observation_col: observed_humidity
+    pred_col: ml_humidity
+    residual_col: residual_humidity
+  temperature:
+    baseline_col: b2_temperature
+    observation_col: observed_temperature
+    pred_col: ml_temperature
+    residual_col: residual_temperature
+temporal_split:
+  calibration_end: '2024-04-30'
+  calibration_start: '2024-04-01'
+  test_end: '2024-06-30'
+  test_start: '2024-05-01'
+  train_end: '2024-03-31'
+  train_start: '2024-01-01'

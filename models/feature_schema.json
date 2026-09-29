@@ -1,0 +1,50 @@
+{
+  "feature_count": 25,
+  "feature_list": [
+    "forecast_temperature",
+    "forecast_humidity",
+    "forecast_rainfall",
+    "lead_time_hours",
+    "b2_temperature",
+    "elevation_mean",
+    "elevation_std",
+    "elevation_range",
+    "slope_mean",
+    "slope_std",
+    "aspect_sin",
+    "aspect_cos",
+    "tri_mean",
+    "tri_std",
+    "landcover_fraction_tree",
+    "landcover_fraction_shrub",
+    "landcover_fraction_grass",
+    "landcover_fraction_cropland",
+    "landcover_fraction_builtup",
+    "landcover_fraction_water",
+    "distance_to_nearest_water",
+    "distance_to_forecast_grid_m",
+    "day_of_year_sin",
+    "day_of_year_cos",
+    "month"
+  ],
+  "categorical_features": [
+    "dominant_landcover_class"
+  ],
+  "strictly_forbidden_features": [
+    "station_id",
+    "station_group",
+    "latitude_obs",
+    "longitude_obs",
+    "observed_temperature",
+    "observed_humidity",
+    "observed_rainfall",
+    "residual_temperature",
+    "residual_humidity",
+    "b0_temperature",
+    "b0_humidity",
+    "b1_temperature",
+    "b1_humidity",
+    "b3_temperature",
+    "b3_humidity"
+  ]
+}

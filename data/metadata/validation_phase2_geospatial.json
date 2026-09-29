@@ -1,0 +1,12 @@
+{
+  "total_cells": 10530,
+  "is_valid": true,
+  "issues": [],
+  "warnings": [],
+  "summary": {
+    "crs": "EPSG:32643 (UTM Zone 43N)",
+    "total_panchayats_represented": 180,
+    "min_cells_per_panchayat": 1,
+    "max_cells_per_panchayat": 771
+  }
+}

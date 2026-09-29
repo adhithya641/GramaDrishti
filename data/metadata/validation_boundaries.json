@@ -1,0 +1,36 @@
+{
+  "dataset_name": "Panchayat Administrative Boundaries",
+  "source_key": "boundaries",
+  "timestamp": "2026-09-29T17:19:53.251756+00:00",
+  "source": "UNKNOWN",
+  "status": "READY",
+  "is_valid": true,
+  "file_format": "geojson",
+  "crs_detected": "EPSG:4326",
+  "spatial_extent": {
+    "min_lon": 76.739748,
+    "min_lat": 10.227448,
+    "max_lon": 77.271084,
+    "max_lat": 11.337469
+  },
+  "temporal_extent": null,
+  "record_count": 180,
+  "resolution": null,
+  "fields_present": [
+    "panchayat_name",
+    "district_name",
+    "state_name",
+    "geometry"
+  ],
+  "fields_missing": [],
+  "missing_value_counts": {},
+  "missing_value_percentages": {},
+  "warnings": [],
+  "errors": [],
+  "limitations": [
+    "state_name: 1 unique values",
+    "district_name: 1 unique values",
+    "block_name: 12 unique values",
+    "panchayat_name: 180 unique values"
+  ]
+}
