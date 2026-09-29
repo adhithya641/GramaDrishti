@@ -1,0 +1,68 @@
+{
+  "dataset_name": "Coarse Weather Forecasts",
+  "source": "UNKNOWN",
+  "source_url": "UNKNOWN",
+  "download_date": "2026-09-29",
+  "original_filename": "synth_forecasts.csv",
+  "format": "csv",
+  "crs": "EPSG:4326",
+  "resolution": "UNKNOWN",
+  "geographic_coverage": "UNKNOWN",
+  "temporal_coverage": {
+    "start_date": "2024-06-01",
+    "end_date": "2024-06-02"
+  },
+  "variables": [
+    "forecast_issue_time",
+    "valid_time",
+    "lead_time",
+    "latitude",
+    "longitude"
+  ],
+  "record_count": 4,
+  "processing_status": "READY",
+  "data_status": "UNVERIFIED",
+  "limitations": [],
+  "notes": "Expected from GFS, ECMWF, or IMD NWP. Must preserve distinction between forecast_issue_time, valid_time, and lead_time. Reanalysis data must NOT be treated as historical forecasts. Not yet acquired.\n",
+  "validation_summary": {
+    "dataset_name": "Coarse Weather Forecasts",
+    "source_key": "forecasts",
+    "timestamp": "2026-09-29T16:18:29.878410+00:00",
+    "source": "UNKNOWN",
+    "status": "READY",
+    "is_valid": true,
+    "file_format": "csv",
+    "crs_detected": "EPSG:4326",
+    "spatial_extent": {
+      "min_lat": 10.0,
+      "max_lat": 10.0,
+      "min_lon": 76.0,
+      "max_lon": 76.0
+    },
+    "temporal_extent": {
+      "start_date": "2024-06-01",
+      "end_date": "2024-06-02"
+    },
+    "record_count": 4,
+    "resolution": null,
+    "fields_present": [
+      "forecast_issue_time",
+      "valid_time",
+      "lead_time",
+      "latitude",
+      "longitude"
+    ],
+    "fields_missing": [],
+    "missing_value_counts": {
+      "temperature": 1,
+      "rainfall": 1
+    },
+    "missing_value_percentages": {
+      "temperature": 25.0,
+      "rainfall": 25.0
+    },
+    "warnings": [],
+    "errors": [],
+    "limitations": []
+  }
+}

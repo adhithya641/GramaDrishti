@@ -1,0 +1,140 @@
+# ============================================================================
+# GramDrishti — Metadata Schema Definition
+# ============================================================================
+# Every ingested dataset must produce a metadata record conforming to this
+# schema. Metadata is saved as JSON alongside processed data in data/metadata/.
+# ============================================================================
+
+metadata_fields:
+
+  dataset_name:
+    type: string
+    required: true
+    description: "Human-readable name for this dataset"
+
+  source:
+    type: string
+    required: true
+    description: "Organisation or system that produced the data"
+
+  source_url:
+    type: string
+    required: false
+    description: "URL where the data can be obtained, if publicly available"
+
+  download_date:
+    type: string
+    required: true
+    format: "YYYY-MM-DD"
+    description: "Date the data was downloaded or received"
+
+  original_filename:
+    type: string
+    required: true
+    description: "Original filename as received"
+
+  file_format:
+    type: string
+    required: true
+    description: "File format (e.g. shp, csv, tif, nc, geojson)"
+
+  spatial_resolution:
+    type: string
+    required: false
+    description: "Spatial resolution (e.g. 30m, 0.25 degree)"
+
+  crs:
+    type: string
+    required: false
+    description: "Coordinate Reference System (e.g. EPSG:4326)"
+
+  geographic_coverage:
+    type: string
+    required: false
+    description: "Geographic area covered (e.g. Kerala, India)"
+
+  temporal_coverage:
+    type: object
+    required: false
+    description: "Start and end dates of the temporal extent"
+    sub_fields:
+      start_date:
+        type: string
+        format: "YYYY-MM-DD"
+      end_date:
+        type: string
+        format: "YYYY-MM-DD"
+
+  variables:
+    type: list
+    required: false
+    description: "List of variable names present in the dataset"
+
+  num_records:
+    type: integer
+    required: false
+    description: "Number of records or features"
+
+  spatial_extent:
+    type: object
+    required: false
+    description: "Bounding box of the data"
+    sub_fields:
+      min_lat:
+        type: float
+      max_lat:
+        type: float
+      min_lon:
+        type: float
+      max_lon:
+        type: float
+
+  processing_status:
+    type: string
+    required: true
+    allowed_values:
+      - "raw"
+      - "validated"
+      - "processed"
+      - "failed"
+    description: "Current processing stage"
+
+  data_provenance:
+    type: string
+    required: true
+    allowed_values:
+      - "real"
+      - "synthetic"
+      - "placeholder"
+      - "stand-in"
+    description: >
+      Whether the data is real observed/official data, synthetically generated
+      for testing, a placeholder with correct schema but no real values, or
+      a stand-in from a proxy source. NEVER label synthetic data as real.
+
+  notes:
+    type: string
+    required: false
+    description: "Free-text notes about the dataset"
+
+  validation_summary:
+    type: object
+    required: false
+    description: "Summary from validation checks"
+    sub_fields:
+      total_records:
+        type: integer
+      missing_value_counts:
+        type: object
+      missing_value_percentages:
+        type: object
+      crs_detected:
+        type: string
+      spatial_extent:
+        type: object
+      temporal_extent:
+        type: object
+      warnings:
+        type: list
+      errors:
+        type: list

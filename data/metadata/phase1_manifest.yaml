@@ -1,0 +1,111 @@
+# ============================================================================
+# GramDrishti — Phase 1 Data Manifest
+# ============================================================================
+# This manifest records the current status of every required dataset.
+# Updated: 2026-09-29
+#
+# IMPORTANT:
+#   Do NOT claim data is available unless it has been verified.
+#   Do NOT fabricate sources, URLs, or coverage information.
+# ============================================================================
+
+phase: 1
+phase_name: "Data Acquisition & Data Foundation"
+last_updated: "2026-09-29"
+pilot_region: "NOT YET SELECTED"
+
+datasets:
+
+  boundaries:
+    status: "MISSING"
+    source: "UNKNOWN"
+    source_url: "UNKNOWN"
+    coverage: "UNKNOWN"
+    format: "shp / geojson / gpkg"
+    crs: "Expected EPSG:4326"
+    record_count: 0
+    data_provenance: "UNAVAILABLE"
+    notes: >
+      Panchayat boundary data has not been acquired.
+      Potential sources: Survey of India, NICSI/LGD, state GIS portals.
+      Ingestion module ready: src/ingestion/boundaries.py
+
+  observations:
+    status: "MISSING"
+    source: "UNKNOWN"
+    source_url: "UNKNOWN"
+    coverage: "UNKNOWN"
+    temporal_coverage: "UNKNOWN"
+    format: "csv"
+    crs: "Expected EPSG:4326"
+    record_count: 0
+    data_provenance: "UNAVAILABLE"
+    notes: >
+      Weather station observation data has not been acquired.
+      Potential sources: IMD, state AWS/ARG networks.
+      QC classification framework ready.
+      Ingestion module ready: src/ingestion/observations.py
+
+  forecasts:
+    status: "MISSING"
+    source: "UNKNOWN"
+    source_url: "UNKNOWN"
+    coverage: "UNKNOWN"
+    temporal_coverage: "UNKNOWN"
+    spatial_resolution: "UNKNOWN"
+    format: "csv"
+    crs: "Expected EPSG:4326"
+    record_count: 0
+    data_provenance: "UNAVAILABLE"
+    notes: >
+      Forecast data has not been acquired.
+      Potential sources: GFS (NOAA), ECMWF, IMD NWP.
+      Issue time / valid time / lead time distinction preserved.
+      Reanalysis must NOT be treated as historical forecasts.
+      Ingestion module ready: src/ingestion/forecasts.py
+
+  dem:
+    status: "MISSING"
+    source: "UNKNOWN"
+    source_url: "UNKNOWN"
+    coverage: "UNKNOWN"
+    spatial_resolution: "UNKNOWN"
+    format: "tif"
+    crs: "Expected EPSG:4326"
+    record_count: 0
+    data_provenance: "UNAVAILABLE"
+    notes: >
+      DEM data has not been acquired.
+      Potential sources: SRTM (USGS), ASTER GDEM, CartoDEM (ISRO).
+      Slope/aspect/TRI NOT computed in Phase 1.
+      Ingestion module ready: src/ingestion/dem.py
+
+  landcover:
+    status: "MISSING"
+    source: "UNKNOWN"
+    source_url: "UNKNOWN"
+    coverage: "UNKNOWN"
+    spatial_resolution: "UNKNOWN"
+    format: "tif / shp"
+    crs: "Expected EPSG:4326"
+    record_count: 0
+    data_provenance: "UNAVAILABLE"
+    notes: >
+      Land-cover data has not been acquired.
+      Potential sources: ISRO Bhuvan LULC, ESA WorldCover, MODIS.
+      ML features NOT computed in Phase 1.
+      Ingestion module ready: src/ingestion/landcover.py
+
+  water:
+    status: "MISSING"
+    source: "UNKNOWN"
+    source_url: "UNKNOWN"
+    coverage: "UNKNOWN"
+    format: "shp / geojson / gpkg"
+    crs: "Expected EPSG:4326"
+    record_count: 0
+    data_provenance: "UNAVAILABLE"
+    notes: >
+      Water body / coastline data has not been acquired.
+      Potential sources: HydroSHEDS, OpenStreetMap, ISRO Bhuvan.
+      Ingestion module ready: src/ingestion/water.py

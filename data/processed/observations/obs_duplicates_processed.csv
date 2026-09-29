@@ -1,0 +1,4 @@
+station_id,timestamp,latitude,longitude,temperature,humidity,rainfall,qc_temperature,qc_humidity,qc_rainfall
+S1,2024-06-01,10.0,76.0,32.0,80.0,0.0,VALID,VALID,VALID
+S1,2024-06-01,10.0,76.0,32.5,81.0,0.0,VALID,VALID,VALID
+S1,2024-06-02,10.0,76.0,33.0,82.0,1.0,VALID,VALID,VALID

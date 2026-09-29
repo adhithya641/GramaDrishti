@@ -1,0 +1,28 @@
+# GramDrishti — Phase 1: Data Foundation
+# Python dependencies
+
+# Core data handling
+pandas>=2.0
+numpy>=1.24
+
+# Geospatial
+geopandas>=0.14
+shapely>=2.0
+fiona>=1.9
+pyproj>=3.6
+rasterio>=1.3
+
+# NetCDF / GRIB
+xarray>=2023.1
+netCDF4>=1.6
+
+# Configuration
+pyyaml>=6.0
+
+# Testing
+pytest>=7.4
+pytest-cov>=4.1
+
+# Logging (stdlib, no install needed)
+# Validation
+jsonschema>=4.20

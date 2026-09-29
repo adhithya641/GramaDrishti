@@ -1,0 +1,303 @@
+# ============================================================================
+# GramDrishti — Data Sources Configuration
+# SIH PS 26074: Panchayat-Level Weather Downscaling for Agro-Advisories
+# ============================================================================
+# This file defines the expected data sources, their formats, required fields,
+# and validation rules. No actual data is downloaded by this config — it only
+# describes what the system expects to ingest.
+#
+# IMPORTANT: Do not fabricate source URLs or claim data exists when it does not.
+# Use UNKNOWN / UNVERIFIED / UNAVAILABLE where appropriate.
+# ============================================================================
+
+project:
+  name: "GramDrishti"
+  description: "Panchayat-Level Weather Downscaling for Agro-Advisories"
+  sih_problem_statement: "PS 26074"
+  phase: 1
+  phase_name: "Data Acquisition & Data Foundation"
+
+# ---------------------------------------------------------------------------
+# Pilot region — NOT YET SELECTED
+# ---------------------------------------------------------------------------
+pilot_region:
+  status: "NOT YET SELECTED"
+  state: "UNKNOWN"
+  district: "UNKNOWN"
+  notes: >
+    Pilot region must be selected based on data availability across all six
+    layers (boundaries, observations, forecasts, DEM, landcover, water).
+    See docs/pilot_region_selection.md for evaluation criteria.
+
+# ---------------------------------------------------------------------------
+# Data source definitions
+# ---------------------------------------------------------------------------
+data_sources:
+
+  boundaries:
+    dataset_name: "Panchayat Administrative Boundaries"
+    source: "UNKNOWN"
+    source_url: "UNKNOWN"
+    local_path: "data/raw/boundaries/"
+    format: ["shp", "geojson", "gpkg"]
+    variables:
+      - "panchayat_name"
+      - "panchayat_code"
+      - "block_name"
+      - "district_name"
+      - "state_name"
+      - "geometry"
+    spatial_resolution: "vector"
+    crs: "EPSG:4326"
+    temporal_coverage: "static"
+    geographic_coverage: "UNKNOWN"
+    status: "UNAVAILABLE"
+    notes: >
+      Panchayat boundary data may come from Survey of India, NICSI, LGD,
+      or state GIS portals. Not yet acquired.
+
+    # Configurable field mapping — maps expected fields to actual column names
+    column_mapping:
+      panchayat_name: "panchayat_name"
+      panchayat_code: "panchayat_code"
+      block_name: "block_name"
+      district_name: "district_name"
+      state_name: "state_name"
+
+    required_fields:
+      - "panchayat_name"
+      - "district_name"
+      - "state_name"
+      - "geometry"
+    optional_fields:
+      - "panchayat_code"
+      - "block_name"
+      - "block_code"
+      - "district_code"
+      - "state_code"
+      - "area_sq_km"
+      - "population"
+
+    raw_dir: "data/raw/boundaries"
+    processed_dir: "data/processed/boundaries"
+
+  observations:
+    dataset_name: "Weather Station Observations"
+    source: "UNKNOWN"
+    source_url: "UNKNOWN"
+    local_path: "data/raw/observations/"
+    format: ["csv"]
+    variables:
+      - "station_id"
+      - "timestamp"
+      - "latitude"
+      - "longitude"
+      - "temperature"
+      - "humidity"
+      - "rainfall"
+    optional_variables:
+      - "pressure"
+      - "wind_speed"
+      - "station_elevation"
+    spatial_resolution: "point"
+    crs: "EPSG:4326"
+    temporal_coverage: "UNKNOWN"
+    geographic_coverage: "UNKNOWN"
+    status: "UNAVAILABLE"
+    notes: >
+      Expected from IMD, AWS networks, or state met departments.
+      Not yet acquired.
+
+    # Configurable column mapping
+    column_mapping:
+      station_id: "station_id"
+      timestamp: "timestamp"
+      latitude: "latitude"
+      longitude: "longitude"
+      temperature: "temperature"
+      humidity: "humidity"
+      rainfall: "rainfall"
+      pressure: "pressure"
+      wind_speed: "wind_speed"
+      station_elevation: "station_elevation"
+
+    required_fields:
+      - "station_id"
+      - "timestamp"
+      - "latitude"
+      - "longitude"
+    optional_fields:
+      - "temperature"
+      - "humidity"
+      - "rainfall"
+      - "pressure"
+      - "wind_speed"
+      - "station_elevation"
+
+    raw_dir: "data/raw/observations"
+    processed_dir: "data/processed/observations"
+
+  forecasts:
+    dataset_name: "Coarse Weather Forecasts"
+    source: "UNKNOWN"
+    source_url: "UNKNOWN"
+    local_path: "data/raw/forecasts/"
+    format: ["csv"]
+    variables:
+      - "forecast_issue_time"
+      - "valid_time"
+      - "lead_time"
+      - "latitude"
+      - "longitude"
+    optional_variables:
+      - "temperature"
+      - "humidity"
+      - "rainfall"
+      - "wind_speed"
+      - "pressure"
+    spatial_resolution: "UNKNOWN"
+    crs: "EPSG:4326"
+    temporal_coverage: "UNKNOWN"
+    geographic_coverage: "UNKNOWN"
+    status: "UNAVAILABLE"
+    notes: >
+      Expected from GFS, ECMWF, or IMD NWP. Must preserve distinction
+      between forecast_issue_time, valid_time, and lead_time.
+      Reanalysis data must NOT be treated as historical forecasts.
+      Not yet acquired.
+
+    # Configurable column mapping
+    column_mapping:
+      forecast_issue_time: "forecast_issue_time"
+      valid_time: "valid_time"
+      lead_time: "lead_time"
+      latitude: "latitude"
+      longitude: "longitude"
+      temperature: "temperature"
+      humidity: "humidity"
+      rainfall: "rainfall"
+      wind_speed: "wind_speed"
+      pressure: "pressure"
+
+    required_fields:
+      - "forecast_issue_time"
+      - "valid_time"
+      - "lead_time"
+      - "latitude"
+      - "longitude"
+    optional_fields:
+      - "temperature"
+      - "humidity"
+      - "rainfall"
+      - "wind_speed"
+      - "pressure"
+
+    raw_dir: "data/raw/forecasts"
+    processed_dir: "data/processed/forecasts"
+
+  dem:
+    dataset_name: "Digital Elevation Model"
+    source: "UNKNOWN"
+    source_url: "UNKNOWN"
+    local_path: "data/raw/dem/"
+    format: ["tif", "tiff"]
+    variables:
+      - "elevation"
+    spatial_resolution: "UNKNOWN"
+    crs: "EPSG:4326"
+    temporal_coverage: "static"
+    geographic_coverage: "UNKNOWN"
+    status: "UNAVAILABLE"
+    notes: >
+      Expected from SRTM (30m/90m), ASTER GDEM, or CartoDEM.
+      Do NOT compute slope, aspect, or TRI in Phase 1.
+      Not yet acquired.
+
+    required_fields:
+      - "elevation"
+    optional_fields: []
+
+    raw_dir: "data/raw/dem"
+    processed_dir: "data/processed/dem"
+
+  landcover:
+    dataset_name: "Land Use / Land Cover Classification"
+    source: "UNKNOWN"
+    source_url: "UNKNOWN"
+    local_path: "data/raw/landcover/"
+    format: ["tif", "tiff", "shp", "geojson"]
+    variables:
+      - "landcover_class"
+    spatial_resolution: "UNKNOWN"
+    crs: "EPSG:4326"
+    temporal_coverage: "static"
+    geographic_coverage: "UNKNOWN"
+    status: "UNAVAILABLE"
+    notes: >
+      Expected from ISRO Bhuvan, ESA WorldCover, or MODIS LULC.
+      Do NOT compute ML features in Phase 1.
+      Not yet acquired.
+
+    required_fields:
+      - "landcover_class"
+    optional_fields:
+      - "ndvi"
+      - "crop_type"
+
+    raw_dir: "data/raw/landcover"
+    processed_dir: "data/processed/landcover"
+
+  water:
+    dataset_name: "Water Bodies and Coastline"
+    source: "UNKNOWN"
+    source_url: "UNKNOWN"
+    local_path: "data/raw/water/"
+    format: ["shp", "geojson", "gpkg", "tif"]
+    variables:
+      - "geometry"
+    optional_variables:
+      - "water_body_name"
+      - "water_body_type"
+      - "area_sq_km"
+      - "is_coastal"
+    spatial_resolution: "vector or raster"
+    crs: "EPSG:4326"
+    temporal_coverage: "static"
+    geographic_coverage: "UNKNOWN"
+    status: "UNAVAILABLE"
+    notes: >
+      Expected from HydroSHEDS, OpenStreetMap, ISRO Bhuvan, or NHD.
+      Not yet acquired.
+
+    required_fields:
+      - "geometry"
+    optional_fields:
+      - "water_body_name"
+      - "water_body_type"
+      - "area_sq_km"
+      - "is_coastal"
+
+    raw_dir: "data/raw/water"
+    processed_dir: "data/processed/water"
+
+# ---------------------------------------------------------------------------
+# Validation rules
+# ---------------------------------------------------------------------------
+validation:
+  coordinate_bounds:
+    india_lat_min: 6.0
+    india_lat_max: 38.0
+    india_lon_min: 68.0
+    india_lon_max: 98.0
+  max_missing_pct_warn: 10.0
+  max_missing_pct_fail: 50.0
+  min_records_warn: 10
+
+# ---------------------------------------------------------------------------
+# QC classification for observations
+# ---------------------------------------------------------------------------
+qc_classification:
+  VALID: "Value present and passes range/consistency checks"
+  MISSING: "Value is null, NaN, or absent"
+  SUSPICIOUS: "Value present but outside expected range or flagged by checks"
+  INVALID: "Value present but fails type or hard-limit checks"

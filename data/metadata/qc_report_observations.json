@@ -1,0 +1,16 @@
+{
+  "qc_temperature": {
+    "VALID": 3,
+    "MISSING": 1,
+    "INVALID": 1
+  },
+  "qc_humidity": {
+    "VALID": 3,
+    "MISSING": 1,
+    "SUSPICIOUS": 1
+  },
+  "qc_rainfall": {
+    "VALID": 4,
+    "MISSING": 1
+  }
+}

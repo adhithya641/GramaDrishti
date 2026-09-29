@@ -1,0 +1,78 @@
+{
+  "dataset_name": "Weather Station Observations",
+  "source": "UNKNOWN",
+  "source_url": "UNKNOWN",
+  "download_date": "2026-09-29",
+  "original_filename": "synth_observations.csv",
+  "format": "csv",
+  "crs": "EPSG:4326",
+  "resolution": "UNKNOWN",
+  "geographic_coverage": "UNKNOWN",
+  "temporal_coverage": {
+    "start_date": "2024-06-01",
+    "end_date": "2024-06-02"
+  },
+  "variables": [
+    "station_id",
+    "timestamp",
+    "latitude",
+    "longitude",
+    "temperature",
+    "humidity",
+    "rainfall"
+  ],
+  "record_count": 5,
+  "processing_status": "READY",
+  "data_status": "UNVERIFIED",
+  "limitations": [],
+  "notes": "Expected from IMD, AWS networks, or state met departments. Not yet acquired.\n",
+  "validation_summary": {
+    "dataset_name": "Weather Station Observations",
+    "source_key": "observations",
+    "timestamp": "2026-09-29T16:18:29.830434+00:00",
+    "source": "UNKNOWN",
+    "status": "READY",
+    "is_valid": true,
+    "file_format": "csv",
+    "crs_detected": "EPSG:4326",
+    "spatial_extent": {
+      "min_lat": 10.0,
+      "max_lat": 12.0,
+      "min_lon": 76.0,
+      "max_lon": 78.0
+    },
+    "temporal_extent": {
+      "start_date": "2024-06-01",
+      "end_date": "2024-06-02"
+    },
+    "record_count": 5,
+    "resolution": null,
+    "fields_present": [
+      "station_id",
+      "timestamp",
+      "latitude",
+      "longitude",
+      "temperature",
+      "humidity",
+      "rainfall"
+    ],
+    "fields_missing": [],
+    "missing_value_counts": {
+      "temperature": 1,
+      "humidity": 1,
+      "rainfall": 1
+    },
+    "missing_value_percentages": {
+      "temperature": 20.0,
+      "humidity": 20.0,
+      "rainfall": 20.0
+    },
+    "warnings": [
+      "Column 'temperature' has 20.0% missing (threshold: 10.0%)",
+      "Column 'humidity' has 20.0% missing (threshold: 10.0%)",
+      "Column 'rainfall' has 20.0% missing (threshold: 10.0%)"
+    ],
+    "errors": [],
+    "limitations": []
+  }
+}
