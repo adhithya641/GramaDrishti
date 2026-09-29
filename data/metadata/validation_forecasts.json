@@ -1,7 +1,7 @@
 {
   "dataset_name": "Coarse Weather Forecasts",
   "source_key": "forecasts",
-  "timestamp": "2026-09-29T18:34:56.556176+00:00",
+  "timestamp": "2026-09-29T18:46:21.110316+00:00",
   "source": "UNKNOWN",
   "status": "READY",
   "is_valid": true,

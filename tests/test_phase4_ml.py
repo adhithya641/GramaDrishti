@@ -152,3 +152,38 @@ class TestPhase4ArtifactsExist:
 
         if os.path.exists(hum_model_path):
             assert os.path.getsize(hum_model_path) > 0
+
+
+class TestAuditConsistency:
+    def test_canonical_test_split_row_counts(self):
+        pred_path = "data/processed/predictions/weather_predictions.csv"
+        if os.path.exists(pred_path):
+            df = pd.read_csv(pred_path)
+            test_df = df[df["split"] == "TEST"]
+            assert len(test_df) == 1464
+            
+            # Check station breakdown
+            stn_counts = test_df["station_id"].value_counts()
+            assert len(stn_counts) == 8
+            for count in stn_counts.values:
+                assert count == 183
+
+    def test_weighted_station_mae_equals_overall_test_mae(self):
+        pred_path = "data/processed/predictions/weather_predictions.csv"
+        if os.path.exists(pred_path):
+            df = pd.read_csv(pred_path)
+            test_df = df[df["split"] == "TEST"]
+            
+            y_temp = test_df["observed_temperature"].values
+            ml_temp = test_df["ml_temperature"].values
+            overall_mae = calculate_metrics(y_temp, ml_temp)["mae"]
+            
+            station_maes = []
+            for stn in test_df["station_id"].unique():
+                stn_df = test_df[test_df["station_id"] == stn]
+                m = calculate_metrics(stn_df["observed_temperature"].values, stn_df["ml_temperature"].values)
+                station_maes.append(m["mae"] * len(stn_df))
+            
+            weighted_mae = round(sum(station_maes) / len(test_df), 4)
+            assert weighted_mae == pytest.approx(overall_mae, abs=1e-3)
+

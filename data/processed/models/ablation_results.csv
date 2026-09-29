@@ -1,5 +1,5 @@
 target,ablation_setting,feature_count,mae,rmse,bias
 temperature,Model A (Forecast + Time Only),8,1.0823,1.3957,-0.3835
-temperature,Model B (Full Forecast + Time + Terrain/GIS),25,1.293,1.6155,-0.6815
+temperature,Model B (Full Forecast + Time + Terrain/GIS),25,1.2225,1.5077,-0.1752
 humidity,Model A (Forecast + Time Only),8,20.0937,21.8967,-19.3061
-humidity,Model B (Full Forecast + Time + Terrain/GIS),25,18.0835,20.1412,-17.7391
+humidity,Model B (Full Forecast + Time + Terrain/GIS),25,19.4556,21.1212,-19.1396

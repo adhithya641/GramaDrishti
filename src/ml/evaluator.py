@@ -100,14 +100,14 @@ def run_ablation_study(
     y_test_obs = test_df[obs_col].values
     b2_test = test_df[baseline_col].values
 
-    # Feature sets
+    # Feature sets (Standardized ordering: forecast -> baseline -> geospatial -> temporal)
     forecast_feats = config["features"]["forecast"]
     temp_feats = config["features"]["temporal"]
     geo_feats = config["features"]["geospatial"]
     cat_feats = config["features"].get("categorical", [])
 
     feats_model_a = forecast_feats + [baseline_col] + temp_feats
-    feats_model_b = forecast_feats + [baseline_col] + temp_feats + geo_feats
+    feats_model_b = forecast_feats + [baseline_col] + geo_feats + temp_feats
 
     # Model A: Forecast + Time
     X_train_a = train_df[feats_model_a].copy()
@@ -117,7 +117,7 @@ def run_ablation_study(
     ml_pred_a = b2_test + pred_res_a
     metrics_a = calculate_metrics(y_test_obs, ml_pred_a)
 
-    # Model B: Full Model
+    # Model B: Full Model (Forecast + Time + GIS)
     X_train_b = train_df[feats_model_b].copy()
     X_test_b = test_df[feats_model_b].copy()
     for cat in cat_feats:
