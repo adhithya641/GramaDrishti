@@ -1,8 +1,8 @@
 """
-GramDrishti — Phase 8 FastAPI Application Server
-=================================================
+GramDrishti — Phase 8 / Phase 10A FastAPI Application Server
+=============================================================
 REST API & Interactive Dashboard server for SIH demonstration.
-Runs 100% offline using local data artifacts.
+Supports LIVE weather mode (Open-Meteo) and HISTORICAL REPLAY mode.
 """
 
 import os
@@ -12,10 +12,12 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from src.dashboard.service import DashboardDataService
+from src.ingestion.live_weather import fetch_live_weather, get_freshness_status
+from src.ingestion.live_validator import validate_live_weather, get_mode_label
 
 app = FastAPI(
     title="GramDrishti API",
-    description="Terrain-Aware Panchayat Weather Downscaling & Agro-Advisory API (SIH PS 26074)",
+    description="Terrain-Aware Panchayat Weather Downscaling & Agro-Advisory API",
     version="1.0.0"
 )
 
@@ -38,6 +40,26 @@ def root_dashboard():
     return HTMLResponse(content="<h1>GramDrishti Dashboard API</h1><p>Static index.html loading...</p>")
 
 
+# ─── System / Meta ───────────────────────────────────────────────────────────
+
+@app.get("/api/health")
+def get_health():
+    """Health check endpoint — returns current system mode and live status."""
+    result = fetch_live_weather()
+    live_data = result.get("data")
+    freshness = get_freshness_status(live_data["data_age_seconds"]) if live_data else "UNAVAILABLE"
+    mode_label = get_mode_label(result["status"], freshness)
+    return {
+        "status": "ok",
+        "mode": result["status"],
+        "mode_label": mode_label,
+        "source": "Open-Meteo",
+        "freshness": freshness,
+        "timestamp": live_data["timestamp"] if live_data else None,
+        "error": result.get("error"),
+    }
+
+
 @app.get("/api/v1/system-status")
 def get_system_status():
     """Return runtime system health and data status checks."""
@@ -49,12 +71,13 @@ def get_metadata():
     """Return metadata summary and validation timestamp."""
     return {
         "project": "GramDrishti",
-        "phase": 8,
+        "phase": "10B",
         "pilot_region": "Coimbatore, Tamil Nadu",
         "panchayats_count": 180,
         "grid_resolution": "1 km",
-        "data_mode": "OFFLINE REPLAY",
-        "last_updated": "2026-09-30T10:39:52.003367+00:00",
+        "default_mode": "LIVE",
+        "data_modes": ["LIVE", "HISTORICAL REPLAY"],
+        "live_provider": "Open-Meteo (no API key required)",
         "disclaimer": "GramDrishti is a validation-driven correction layer over coarse weather forecasts. It does not replace operational forecasts or establish panchayat-scale ground truth."
     }
 
@@ -89,6 +112,8 @@ def get_geojson(
         lead_time=lead_time
     )
 
+
+# ─── Panchayat endpoints ──────────────────────────────────────────────────────
 
 @app.get("/panchayat/{panchayat_id}/forecast")
 @app.get("/api/v1/panchayat/{panchayat_id}/forecast")
@@ -166,6 +191,136 @@ def get_block_comparison(
     )
 
 
+# ─── Phase 10 Live Weather Endpoints ──────────────────────────────────────────
+
+@app.get("/api/live/weather")
+def get_live_weather():
+    """
+    Return current real-time Coimbatore weather from Open-Meteo with provenance.
+    Falls back to cached or historical replay if API is unavailable.
+    IMPORTANT: Live data is a regional observation, not a validated panchayat downscale.
+    """
+    result = fetch_live_weather()
+    live_data = result.get("data")
+    prov = result.get("provenance")
+
+    if live_data is None:
+        return {
+            "status": result["status"],
+            "mode_label": "HISTORICAL REPLAY",
+            "data": None,
+            "provenance": prov,
+            "error": result.get("error"),
+            "disclaimer": "Live weather unavailable. Falling back to historical replay mode.",
+        }
+
+    is_valid, errors, validation_summary = validate_live_weather(live_data)
+    freshness = get_freshness_status(live_data["data_age_seconds"])
+    mode_label = get_mode_label(result["status"], freshness)
+
+    return {
+        "status": result["status"],
+        "mode_label": mode_label,
+        "cache_used": result.get("cache_used", False),
+        "validation": validation_summary,
+        "freshness": freshness,
+        "provenance": prov,
+        "data": live_data,
+        "model_note": (
+            "LIVE REGIONAL WEATHER — This is a direct Open-Meteo observation for Coimbatore. "
+            "It is NOT output from the GramDrishti downscaling model. "
+            "GramDrishti model validation is based on the historical test set (Jan–Jun 2024)."
+        ),
+        "error": result.get("error"),
+    }
+
+
+@app.get("/api/live/forecast")
+def get_live_forecast(hours: int = Query(12, description="Number of hourly forecast steps to return (max 48)")):
+    """Return hourly forecast for Coimbatore from Open-Meteo."""
+    result = fetch_live_weather()
+    live_data = result.get("data")
+
+    if live_data is None:
+        return {
+            "status": result["status"],
+            "mode_label": "HISTORICAL REPLAY",
+            "forecast_hours": [],
+            "error": result.get("error"),
+        }
+
+    hours = min(max(1, hours), 48)
+    freshness = get_freshness_status(live_data["data_age_seconds"])
+    mode_label = get_mode_label(result["status"], freshness)
+
+    return {
+        "status": result["status"],
+        "mode_label": mode_label,
+        "location": "Coimbatore, Tamil Nadu",
+        "timezone": live_data.get("timezone"),
+        "forecast_hours": live_data.get("forecast_hours", [])[:hours],
+        "model_note": "LIVE FORECAST — Open-Meteo 48h ahead. Not GramDrishti model output.",
+    }
+
+
+@app.get("/api/live/status")
+def get_live_status():
+    """Return connectivity and freshness status of the live data layer."""
+    result = fetch_live_weather()
+    live_data = result.get("data")
+    freshness = get_freshness_status(live_data["data_age_seconds"]) if live_data else "UNAVAILABLE"
+    mode_label = get_mode_label(result["status"], freshness)
+
+    return {
+        "live_api_reachable": result["status"] == "live",
+        "fetch_status": result["status"],
+        "mode_label": mode_label,
+        "freshness": freshness,
+        "cache_used": result.get("cache_used", False),
+        "data_age_seconds": live_data["data_age_seconds"] if live_data else None,
+        "last_timestamp": live_data["timestamp"] if live_data else None,
+        "error": result.get("error"),
+    }
+
+
+@app.get("/api/live/source")
+def get_live_source():
+    """Return data source metadata and attribution for the live weather layer."""
+    return {
+        "provider": "Open-Meteo",
+        "type": "Public — No API key required",
+        "base_url": "https://api.open-meteo.com/v1/forecast",
+        "docs": "https://open-meteo.com/en/docs",
+        "attribution": "Open-Meteo.com — CC BY 4.0",
+        "location": {
+            "name": "Coimbatore",
+            "state": "Tamil Nadu",
+            "country": "India",
+            "latitude": 11.0168,
+            "longitude": 76.9558,
+        },
+        "variables": [
+            "temperature_2m (°C)", "relative_humidity_2m (%)",
+            "apparent_temperature (°C)", "precipitation (mm)",
+            "weather_code (WMO)", "surface_pressure (hPa)",
+            "wind_speed_10m (km/h)", "wind_direction_10m (°)",
+            "cloud_cover (%)",
+        ],
+        "forecast_variables": [
+            "temperature_2m", "relative_humidity_2m",
+            "precipitation_probability (%)", "precipitation (mm)",
+            "weather_code (WMO)",
+        ],
+        "update_frequency": "Every 15 minutes (current), hourly forecast",
+        "model_note": (
+            "Live data is for regional Coimbatore weather only. "
+            "GramDrishti panchayat downscaling is validated on historical test data. "
+            "Live model inference is labeled 'LIVE REGIONAL WEATHER' throughout the application."
+        ),
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
+

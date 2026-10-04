@@ -15,8 +15,10 @@ python scripts/run_demo.py
 
 Open your browser at [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
-### Operating Mode
-Historical replay using validated Coimbatore pilot artifacts (May 01 – June 30, 2024). Runs 100% offline.
+### Operating Modes
+
+1. **LIVE MODE (Default)**: Real-time Coimbatore weather ingestion from Open-Meteo API (`https://api.open-meteo.com/v1/forecast`), public and open access (no API key required). Features live weather cards, IST timestamps (`Asia/Kolkata`), 24–48 hour hourly forecast timeline, live data provenance, and 5-minute auto-refresh.
+2. **HISTORICAL REPLAY MODE**: Archived validated Coimbatore test period (May 01 – June 30, 2024). Evaluates GramDrishti ML downscaling models, conformal uncertainty intervals (CQR), block vs panchayat downscaling, and evidence-gated crop advisories across 180 Gram Panchayats.
 
 ### Pilot Region Scope & Coverage
 * **Gram Panchayats**: 180 Gram Panchayats

@@ -1,0 +1,57 @@
+# GramDrishti — Phase 10A Live Data Configuration
+# =================================================
+# Real-time Coimbatore weather integration settings.
+# DO NOT store API keys here. Read from environment variables if needed.
+
+mode: live  # live | historical_replay
+
+location:
+  name: Coimbatore
+  state: Tamil Nadu
+  country: India
+  latitude: 11.0168
+  longitude: 76.9558
+  elevation_m: 431
+  district: Coimbatore
+  timezone: Asia/Kolkata
+
+refresh:
+  interval_minutes: 15
+  timeout_seconds: 10
+  max_retries: 2
+
+provider:
+  name: Open-Meteo
+  type: public_no_key
+  base_url: https://api.open-meteo.com/v1/forecast
+  attribution: "Open-Meteo.com — CC BY 4.0"
+  docs: https://open-meteo.com/en/docs
+  # No API key required for non-commercial prototype use.
+  # For production / high-volume use, see: https://open-meteo.com/en/pricing
+  api_key_env_var: WEATHER_API_KEY   # optional, not used for Open-Meteo free tier
+
+cache:
+  enabled: true
+  path: data/cache/live_weather.json
+  max_age_seconds: 10800  # 3 hours before EXPIRED
+
+freshness:
+  fresh_threshold_seconds: 900    # 15 min -> FRESH
+  aging_threshold_seconds: 3600   # 1 hour -> AGING
+  stale_threshold_seconds: 10800  # 3 hours -> STALE
+  # Beyond stale -> EXPIRED -> fallback to historical replay
+
+fallback_chain:
+  - live_api
+  - cached_local
+  - historical_replay
+
+model_integrity:
+  # IMPORTANT: live weather is a visualization/operational layer only.
+  # It does NOT replace or re-validate Phase 1-9 scientific experiments.
+  # The Phase 4-7 ML models were trained and validated on historical data.
+  # Live inputs may be passed through the model for demo purposes ONLY.
+  # Any model output on live data MUST be labeled:
+  #   "LIVE REGIONAL WEATHER — Model output not independently validated on live data"
+  live_model_inference_label: "LIVE REGIONAL WEATHER"
+  historical_model_label: "GRAMDRISHTI MODEL — Validation: Historical Coimbatore test set"

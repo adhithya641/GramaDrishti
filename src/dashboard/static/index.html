@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GramDrishti — Terrain-Aware Panchayat Weather Downscaling</title>
+    <title>GramDrishti — Live Weather & Panchayat Downscaling</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,6 +20,7 @@
             --accent-blue: #3b82f6;
             --accent-yellow: #f59e0b;
             --accent-red: #ef4444;
+            --accent-purple: #8b5cf6;
             --accent-gray: #6b7280;
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
@@ -44,44 +45,75 @@
             justify-content: space-between;
             align-items: center;
             background: linear-gradient(135deg, #111827 0%, #1e293b 100%);
-            padding: 20px 24px;
+            padding: 18px 24px;
             border-radius: 12px;
             border: 1px solid var(--card-border);
             margin-bottom: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .title-group h1 {
             font-family: 'Outfit', sans-serif;
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 700;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             color: #ffffff;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .title-group h1 span.badge-brand {
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            font-size: 11px;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-
         .title-group p {
             font-size: 13px;
             color: var(--text-muted);
-            margin-top: 4px;
+            margin-top: 2px;
         }
 
-        .header-badges {
+        .header-controls {
             display: flex;
-            gap: 10px;
             align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        /* Mode Switcher Toggle */
+        .mode-toggle {
+            display: flex;
+            background: #0d1117;
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid #374151;
+        }
+
+        .mode-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mode-btn.active.live {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .mode-btn.active.historical {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
         }
 
         .badge-status {
@@ -91,72 +123,50 @@
             font-weight: 600;
             background: #1f293d;
             border: 1px solid #374151;
-        }
-
-        .badge-status.green { color: #34d399; border-color: rgba(52, 211, 153, 0.3); }
-        .badge-status.yellow { color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); }
-        .badge-status.blue { color: #60a5fa; border-color: rgba(96, 165, 250, 0.3); }
-
-        .toolbar {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 16px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .tool-group {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
         }
 
-        .tool-group label {
+        .badge-status.green { color: #34d399; border-color: rgba(52, 211, 153, 0.4); background: rgba(52, 211, 153, 0.1); }
+        .badge-status.yellow { color: #fbbf24; border-color: rgba(251, 191, 36, 0.4); background: rgba(251, 191, 36, 0.1); }
+        .badge-status.blue { color: #60a5fa; border-color: rgba(96, 165, 250, 0.4); background: rgba(96, 165, 250, 0.1); }
+        .badge-status.red { color: #fca5a5; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.1); }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #34d399;
+            box-shadow: 0 0 8px #34d399;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Banner styles */
+        .live-banner {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+            padding: 10px 16px;
+            border-radius: 8px;
             font-size: 13px;
-            font-weight: 500;
-            color: var(--text-muted);
-        }
-
-        select, button {
-            background: #1e293b;
-            color: #fff;
-            border: 1px solid #374151;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        select:hover, button:hover {
-            border-color: #60a5fa;
-        }
-
-        .var-btn {
-            background: #1e293b;
-            border: 1px solid #374151;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        .var-btn.active {
-            background: var(--accent-blue);
-            color: #fff;
-            border-color: #60a5fa;
             font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
         }
 
         .replay-banner {
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.4);
-            color: #fca5a5;
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #fbbf24;
             padding: 10px 16px;
             border-radius: 8px;
             font-size: 13px;
@@ -165,18 +175,6 @@
             align-items: center;
             gap: 8px;
             margin-bottom: 16px;
-        }
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 420px;
-            gap: 16px;
-        }
-
-        @media (max-width: 1024px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
         }
 
         .card {
@@ -202,14 +200,165 @@
             font-size: 16px;
             font-weight: 600;
             color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        #map {
-            height: 620px;
+        /* Live Mode Cards Grid */
+        .live-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .weather-card {
+            background: #1e293b;
+            border: 1px solid #374151;
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s;
+        }
+
+        .weather-card:hover {
+            transform: translateY(-2px);
+            border-color: #60a5fa;
+        }
+
+        .weather-card .card-title {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .weather-card .card-value {
+            font-size: 26px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            color: #ffffff;
+            margin: 8px 0 2px 0;
+        }
+
+        .weather-card .card-sub {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        /* Forecast Timeline */
+        .forecast-timeline-container {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .forecast-timeline-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .forecast-timeline-container::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 3px;
+        }
+
+        .timeline-card {
+            background: #1e293b;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            padding: 12px 14px;
+            min-width: 90px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .timeline-card .time { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+        .timeline-card .emoji { font-size: 20px; margin: 4px 0; }
+        .timeline-card .temp { font-size: 14px; font-weight: 700; color: #fff; }
+        .timeline-card .rain { font-size: 11px; color: #60a5fa; margin-top: 2px; }
+
+        /* Map styling */
+        #map-live, #map-historical {
+            height: 540px;
             width: 100%;
             border-radius: 10px;
             border: 1px solid var(--card-border);
             background: #0d1117;
+        }
+
+        /* Toolbar styles */
+        .toolbar {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 14px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tool-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        select, button.action-btn {
+            background: #1e293b;
+            color: #fff;
+            border: 1px solid #374151;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        select:hover, button.action-btn:hover {
+            border-color: #60a5fa;
+        }
+
+        .var-btn {
+            background: #1e293b;
+            border: 1px solid #374151;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .var-btn.active {
+            background: var(--accent-blue);
+            color: #fff;
+            border-color: #60a5fa;
+            font-weight: 600;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 16px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .info-row {
@@ -261,39 +410,12 @@
             margin-top: 10px;
         }
 
-        .not-eval-box {
-            background: rgba(107, 114, 128, 0.1);
-            border: 1px solid rgba(107, 114, 128, 0.3);
-            color: #d1d5db;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            text-align: center;
-            margin-top: 10px;
-        }
-
         .comp-bar {
             background: #1e293b;
             border-radius: 6px;
             padding: 10px;
             margin-bottom: 8px;
         }
-
-        .status-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-
-        .status-item {
-            background: #1e293b;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 11px;
-        }
-
-        .status-item span.icon { font-weight: 700; }
-        .status-item.ok span.icon { color: #34d399; }
 
         footer {
             margin-top: 24px;
@@ -312,194 +434,571 @@
     <!-- Header -->
     <header>
         <div class="title-group">
-            <h1>GRAMDRISHTI <span class="badge-brand">SIH PS 26074</span></h1>
-            <p>Terrain-Aware Panchayat Weather Downscaling & Agro-Advisory System</p>
+            <h1>GRAMDRISHTI</h1>
+            <p>Panchayat Weather Intelligence • Coimbatore, Tamil Nadu</p>
         </div>
-        <div class="header-badges">
-            <div class="badge-status blue">Pilot: Coimbatore, TN (180 GPs)</div>
-            <div class="badge-status yellow">DATA MODE: OFFLINE REPLAY</div>
-            <div class="badge-status green">STATUS: OPERATIONAL</div>
+
+        <div class="header-controls">
+            <!-- Mode Switcher -->
+            <div class="mode-toggle">
+                <button id="btn-mode-live" class="mode-btn active live" onclick="setAppMode('LIVE')">
+                    <span class="pulse-dot" id="live-dot"></span> ● LIVE
+                </button>
+                <button id="btn-mode-historical" class="mode-btn" onclick="setAppMode('HISTORICAL_REPLAY')">
+                    📜 HISTORICAL REPLAY
+                </button>
+            </div>
+
+            <!-- Status Badge -->
+            <div id="status-badge" class="badge-status green">
+                <span>Open-Meteo: CONNECTED</span>
+            </div>
         </div>
     </header>
 
-    <!-- Toolbar -->
-    <div class="toolbar">
-        <div class="tool-group">
-            <label for="timestamp-select">Replay Date:</label>
-            <select id="timestamp-select" onchange="onFilterChange()"></select>
-            <label for="leadtime-select">Lead Time:</label>
-            <select id="leadtime-select" onchange="onFilterChange()">
-                <option value="24">24 Hours</option>
-                <option value="48">48 Hours</option>
-                <option value="72">72 Hours</option>
-            </select>
+    <!-- Alert / Fallback Notice (Dynamic) -->
+    <div id="system-alert-banner" style="display: none;"></div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════════ -->
+    <!-- VIEW 1: LIVE MODE (DEFAULT) -->
+    <!-- ══════════════════════════════════════════════════════════════════════════ -->
+    <div id="view-live">
+        <!-- Live Status Bar & Auto Refresh Toolbar -->
+        <div class="live-banner">
+            <div>
+                <span style="color: #34d399; font-weight: 700;">● LIVE MODE</span> &mdash; Current Coimbatore Regional Weather
+                <span style="font-size: 12px; color: var(--text-muted); margin-left: 10px;" id="live-observed-time">Fetching live data...</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 12px; color: var(--text-muted);" id="refresh-countdown">Next refresh: 5:00</span>
+                <button class="action-btn" onclick="fetchLiveWeather(true)" style="padding: 4px 10px; font-size: 12px;">↻ Refresh Now</button>
+            </div>
         </div>
-        <div class="tool-group">
-            <label>Variable:</label>
-            <button class="var-btn active" onclick="setVariable('temperature', this)">Temperature (°C)</button>
-            <button class="var-btn" onclick="setVariable('humidity', this)">Humidity (%)</button>
-            <button class="var-btn" onclick="setVariable('rain_1mm', this)">Rain ≥ 1mm</button>
-            <button class="var-btn" onclick="setVariable('rain_10mm', this)">Rain ≥ 10mm</button>
-            <button class="var-btn" onclick="setVariable('rain_25mm', this)">Rain ≥ 25mm</button>
+
+        <!-- Live Current Weather Cards Grid -->
+        <div class="live-grid">
+            <div class="weather-card">
+                <div class="card-title">🌡️ Temperature</div>
+                <div class="card-value" id="card-temp">-- °C</div>
+                <div class="card-sub" id="card-feels">Apparent: -- °C</div>
+            </div>
+
+            <div class="weather-card">
+                <div class="card-title">💧 Relative Humidity</div>
+                <div class="card-value" id="card-humidity">-- %</div>
+                <div class="card-sub">Moisture level</div>
+            </div>
+
+            <div class="weather-card">
+                <div class="card-title">🌧️ Precipitation</div>
+                <div class="card-value" id="card-rain">-- mm</div>
+                <div class="card-sub">Current intensity</div>
+            </div>
+
+            <div class="weather-card">
+                <div class="card-title">💨 Wind Speed</div>
+                <div class="card-value" id="card-wind">-- km/h</div>
+                <div class="card-sub" id="card-wind-dir">Direction: --°</div>
+            </div>
+
+            <div class="weather-card">
+                <div class="card-title">🧭 Surface Pressure</div>
+                <div class="card-value" id="card-pressure">-- hPa</div>
+                <div class="card-sub" id="card-cloud">Cloud cover: --%</div>
+            </div>
+
+            <div class="weather-card">
+                <div class="card-title">🌤️ Weather Condition</div>
+                <div class="card-value" style="font-size: 20px; line-height: 1.2;" id="card-condition">
+                    <span id="card-emoji">⛅</span> <span id="card-desc">--</span>
+                </div>
+                <div class="card-sub">WMO standard code</div>
+            </div>
         </div>
-    </div>
 
-    <!-- Mandatory Historical Replay Banner -->
-    <div class="replay-banner">
-        ⚠️ HISTORICAL REPLAY — NOT LIVE FORECAST | Archived Pilot Test Period (May 01 – Jun 30, 2024)
-    </div>
-
-    <!-- Main Grid -->
-    <div class="main-grid">
-
-        <!-- Left: Map Container -->
+        <!-- Hourly Forecast Timeline -->
         <div class="card">
             <div class="card-header">
-                <h2 id="map-title">Panchayat Forecast Map — Coimbatore District</h2>
-                <span id="map-legend-info" class="badge-status blue">180 Gram Panchayats</span>
+                <h2>📈 Hourly Forecast Timeline (Next 24–48 Hours)</h2>
+                <span class="badge-status blue">Source: Open-Meteo API</span>
             </div>
-            <div id="map"></div>
+            <div class="forecast-timeline-container" id="forecast-timeline">
+                <div style="color: var(--text-muted); font-size: 13px; padding: 10px;">Loading hourly forecast timeline...</div>
+            </div>
         </div>
 
-        <!-- Right: Detail Panels -->
-        <div>
-            <!-- Panchayat Selection Panel -->
+        <!-- Live Layout Grid: Map + Provenance -->
+        <div class="main-grid">
+            <!-- Left: Live Map -->
             <div class="card">
                 <div class="card-header">
-                    <h2>Panchayat Detail</h2>
-                    <span id="p-conf-badge" class="conf-badge conf-HIGH">HIGH</span>
+                    <h2>🗺️ Coimbatore Gram Panchayat Map Context</h2>
+                    <span class="badge-status green">180 Gram Panchayats</span>
                 </div>
-                <div class="info-row">
-                    <span class="info-label">Panchayat:</span>
-                    <span class="info-val" id="p-name">Anaimalai Panchayat 1</span>
+                <div style="font-size: 12px; color: #fbbf24; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); padding: 8px 12px; border-radius: 6px; margin-bottom: 12px;">
+                    ℹ️ <strong>LIVE REGIONAL WEATHER</strong> — Visualizing current Open-Meteo Coimbatore observations. (Panchayat-level ML downscaling is validated on historical 2024 test data).
                 </div>
-                <div class="info-row">
-                    <span class="info-label">Panchayat ID:</span>
-                    <span class="info-val" id="p-id">GP_33_12_0001</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Block Name:</span>
-                    <span class="info-val" id="p-block">Anaimalai</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">1 km Grid Cells:</span>
-                    <span class="info-val" id="p-cells">9 cells (OK)</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Active Fallback Source:</span>
-                    <span class="info-val" id="p-fallback" style="color: #60a5fa;">PRIMARY_MODEL</span>
-                </div>
+                <div id="map-live"></div>
             </div>
 
-            <!-- Uncertainty Visualization Card -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Uncertainty Quantification (CQR)</h2>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Temperature (P50):</span>
-                    <span class="info-val" id="temp-val">32.40 °C</span>
-                </div>
-                <div class="uq-bar-container">
-                    <div style="font-size: 11px; color: var(--text-muted); text-align: center;">Temperature Conformal Interval (87.7% Cov)</div>
-                    <div class="uq-bar">
-                        <span style="color: #60a5fa;">P10: <span id="temp-p10">30.04</span>°C</span>
-                        <span style="color: #34d399;">P50: <span id="temp-p50">32.40</span>°C</span>
-                        <span style="color: #f87171;">P90: <span id="temp-p90">34.76</span>°C</span>
+            <!-- Right: Data Provenance Panel -->
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>📡 Live Data Provenance</h2>
+                        <span id="provenance-badge" class="conf-badge conf-HIGH">LIVE_FRESH</span>
+                    </div>
+
+                    <div class="info-row">
+                        <span class="info-label">Provider:</span>
+                        <span class="info-val" id="prov-provider">Open-Meteo</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Location:</span>
+                        <span class="info-val">Coimbatore, Tamil Nadu</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Coordinates:</span>
+                        <span class="info-val">11.0168° N, 76.9558° E</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Observed Timestamp:</span>
+                        <span class="info-val" id="prov-observed">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Last Fetched:</span>
+                        <span class="info-val" id="prov-fetched">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Data Age:</span>
+                        <span class="info-val" id="prov-age">-- sec</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Freshness State:</span>
+                        <span class="info-val" id="prov-freshness">FRESH</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">API Status:</span>
+                        <span class="info-val" id="prov-status" style="color: #34d399;">CONNECTED</span>
+                    </div>
+
+                    <div style="margin-top: 14px; font-size: 11px; color: var(--text-muted); background: #1e293b; padding: 10px; border-radius: 6px; line-height: 1.5;">
+                        <strong>Attribution:</strong> Weather data provided by Open-Meteo under CC BY 4.0. No API key required for public regional ingestion.
                     </div>
                 </div>
 
-                <div class="info-row" style="margin-top: 14px;">
-                    <span class="info-label">Humidity (P50):</span>
-                    <span class="info-val" id="hum-val">68.50 %</span>
-                </div>
-                <div class="uq-bar-container">
-                    <div style="font-size: 11px; color: var(--text-muted); text-align: center;">Humidity Interval Width: 27.61%</div>
-                    <div class="uq-bar">
-                        <span>P10: <span id="hum-p10">54.70</span>%</span>
-                        <span>P50: <span id="hum-p50">68.50</span>%</span>
-                        <span>P90: <span id="hum-p90">82.30</span>%</span>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>ℹ️ Scientific Distinction Notice</h2>
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+                        <p style="margin-bottom: 8px;"><strong>LIVE MODE:</strong> Displays real-time regional weather for Coimbatore from Open-Meteo APIs. Intended for live monitoring.</p>
+                        <p><strong>HISTORICAL REPLAY MODE:</strong> Runs the validated GramDrishti ML downscaling pipeline over the 2024 test period (180 Gram Panchayats, 1 km grid, Conformal UQ, Evidence-Gated Crop Advisories).</p>
                     </div>
                 </div>
-                <div id="hum-warning-box" class="warning-box">
-                    ⚠️ LOW RELIABILITY — temporal distribution shift detected (Coverage 20.15% &lt; 70% target)
-                </div>
             </div>
+        </div>
+    </div>
 
-            <!-- Block vs Panchayat Comparison -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Block vs Panchayat Downscaling</h2>
-                </div>
-                <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
-                    Coarse Forecast: <strong style="color: #fff;" id="coarse-temp">32.40 °C</strong> (ECMWF IFS) vs Downscaled Panchayats in Block:
-                </div>
-                <div id="block-comp-container"></div>
-                <div style="font-size: 10px; color: var(--text-muted); margin-top: 6px; text-align: right;">
-                    Data Source Label: <em>Historical replay / model output</em>
-                </div>
-            </div>
 
-            <!-- Agro-Advisory Panel -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>Evidence-Gated Agro-Advisory</h2>
-                    <span id="adv-status-badge" class="conf-badge conf-HIGH">ACTIONABLE</span>
-                </div>
-                <div style="font-size: 13px; line-height: 1.5;" id="adv-text-content">
-                    Optimal temperature for crop growth. Schedule light irrigation in early morning.
-                </div>
-            </div>
-
-            <!-- System Health Panel -->
-            <div class="card">
-                <div class="card-header">
-                    <h2>System Status Matrix</h2>
-                </div>
-                <div class="status-grid">
-                    <div class="status-item ok"><span class="icon">✓</span> Boundaries</div>
-                    <div class="status-item ok"><span class="icon">✓</span> Terrain/GIS</div>
-                    <div class="status-item ok"><span class="icon">✓</span> Forecast</div>
-                    <div class="status-item ok"><span class="icon">✓</span> Observations</div>
-                    <div class="status-item ok"><span class="icon">✓</span> Baseline</div>
-                    <div class="status-item ok"><span class="icon">✓</span> ML Correction</div>
-                    <div class="status-item ok"><span class="icon">✓</span> Uncertainty</div>
-                    <div class="status-item ok"><span class="icon">✓</span> Reliability</div>
-                    <div class="status-item ok"><span class="icon">✓</span> Offline Replay</div>
-                </div>
-            </div>
-
+    <!-- ══════════════════════════════════════════════════════════════════════════ -->
+    <!-- VIEW 2: HISTORICAL REPLAY MODE -->
+    <!-- ══════════════════════════════════════════════════════════════════════════ -->
+    <div id="view-historical" style="display: none;">
+        <!-- Mandatory Historical Replay Banner -->
+        <div class="replay-banner">
+            ⚠️ HISTORICAL REPLAY MODE — Archived Pilot Test Period (May 01 – Jun 30, 2024) | Validated GramDrishti Downscaling Model
         </div>
 
+        <!-- Historical Control Toolbar -->
+        <div class="toolbar">
+            <div class="tool-group">
+                <label for="timestamp-select">Replay Date:</label>
+                <select id="timestamp-select" onchange="onHistoricalFilterChange()"></select>
+
+                <label for="leadtime-select">Lead Time:</label>
+                <select id="leadtime-select" onchange="onHistoricalFilterChange()">
+                    <option value="24">24 Hours</option>
+                    <option value="48">48 Hours</option>
+                    <option value="72">72 Hours</option>
+                </select>
+            </div>
+
+            <div class="tool-group">
+                <label>Variable:</label>
+                <button class="var-btn active" onclick="setHistoricalVariable('temperature', this)">Temperature (°C)</button>
+                <button class="var-btn" onclick="setHistoricalVariable('humidity', this)">Humidity (%)</button>
+                <button class="var-btn" onclick="setHistoricalVariable('rain_1mm', this)">Rain ≥ 1mm</button>
+                <button class="var-btn" onclick="setHistoricalVariable('rain_10mm', this)">Rain ≥ 10mm</button>
+                <button class="var-btn" onclick="setHistoricalVariable('rain_25mm', this)">Rain ≥ 25mm</button>
+            </div>
+        </div>
+
+        <!-- Main Historical Grid -->
+        <div class="main-grid">
+            <!-- Left: Historical Map -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 id="hist-map-title">Panchayat Forecast Map — Coimbatore District</h2>
+                    <span id="hist-map-legend" class="badge-status blue">180 Gram Panchayats</span>
+                </div>
+                <div id="map-historical"></div>
+            </div>
+
+            <!-- Right: Panchayat Detail & UQ Panels -->
+            <div>
+                <!-- Panchayat Selection Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Panchayat Detail</h2>
+                        <span id="p-conf-badge" class="conf-badge conf-HIGH">HIGH</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Panchayat:</span>
+                        <span class="info-val" id="p-name">Anaimalai Panchayat 1</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Panchayat ID:</span>
+                        <span class="info-val" id="p-id">GP_33_12_0001</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Block Name:</span>
+                        <span class="info-val" id="p-block">Anaimalai</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">1 km Grid Cells:</span>
+                        <span class="info-val" id="p-cells">9 cells (OK)</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Active Fallback Source:</span>
+                        <span class="info-val" id="p-fallback" style="color: #60a5fa;">PRIMARY_MODEL</span>
+                    </div>
+                </div>
+
+                <!-- Uncertainty Quantification Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Uncertainty Quantification (CQR)</h2>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Temperature (P50):</span>
+                        <span class="info-val" id="temp-val">-- °C</span>
+                    </div>
+                    <div class="uq-bar-container">
+                        <div style="font-size: 11px; color: var(--text-muted); text-align: center;">Temperature Conformal Interval (87.7% Cov)</div>
+                        <div class="uq-bar">
+                            <span style="color: #60a5fa;">P10: <span id="temp-p10">--</span>°C</span>
+                            <span style="color: #34d399;">P50: <span id="temp-p50">--</span>°C</span>
+                            <span style="color: #f87171;">P90: <span id="temp-p90">--</span>°C</span>
+                        </div>
+                    </div>
+
+                    <div class="info-row" style="margin-top: 14px;">
+                        <span class="info-label">Humidity (P50):</span>
+                        <span class="info-val" id="hum-val">-- %</span>
+                    </div>
+                    <div class="uq-bar-container">
+                        <div style="font-size: 11px; color: var(--text-muted); text-align: center;">Humidity Conformal Interval</div>
+                        <div class="uq-bar">
+                            <span>P10: <span id="hum-p10">--</span>%</span>
+                            <span>P50: <span id="hum-p50">--</span>%</span>
+                            <span>P90: <span id="hum-p90">--</span>%</span>
+                        </div>
+                    </div>
+                    <div id="hum-warning-box" class="warning-box" style="display: none;">
+                        ⚠️ LOW RELIABILITY — temporal distribution shift detected (Coverage &lt; 70% target)
+                    </div>
+                </div>
+
+                <!-- Block vs Panchayat Downscaling -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Block vs Panchayat Downscaling</h2>
+                    </div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
+                        Coarse District Forecast: <strong style="color: #fff;" id="coarse-temp">-- °C</strong> vs Downscaled Panchayats:
+                    </div>
+                    <div id="block-comp-container"></div>
+                </div>
+
+                <!-- Evidence-Gated Agro-Advisory Panel -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Evidence-Gated Agro-Advisory</h2>
+                        <span id="adv-status-badge" class="conf-badge conf-HIGH">ACTIONABLE</span>
+                    </div>
+                    <div style="font-size: 13px; line-height: 1.5;" id="adv-text-content">
+                        Loading crop advisory recommendation...
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Scientific Disclaimer Footer -->
     <footer>
-        <p><strong>Scientific Disclaimer:</strong> GramDrishti is a validation-driven correction layer over coarse weather forecasts. It does not replace operational forecasts or establish panchayat-scale ground truth.</p>
-        <p><strong>Pilot Dataset Note:</strong> Forecast source in this pilot is a stand-in historical forecast dataset derived from Open-Meteo ECMWF/GFS archives for Coimbatore District (180 Gram Panchayats).</p>
+        <p><strong>Scientific Disclaimer:</strong> GramDrishti is a validation-driven correction layer over coarse weather forecasts. Live weather data is fetched from Open-Meteo API. Historical downscaling model results represent the Jan–Jun 2024 test period.</p>
     </footer>
 
     <!-- JavaScript Application Logic -->
     <script>
+        // Global App State
+        let currentMode = 'LIVE'; // Default mode MUST be LIVE!
+        let liveMap, historicalMap, geojsonLayerLive, geojsonLayerHist;
+        let refreshTimer = null;
+        let refreshSecondsRemaining = 300;
+
+        // Historical state variables
         let currentVariable = 'temperature';
         let currentTimestamp = '2024-05-01';
         let currentLeadTime = 24;
         let selectedPanchayatId = 'GP_33_12_0001';
-        let map, geojsonLayer;
 
-        // Initialize Map
-        function initMap() {
-            map = L.map('map').setView([10.9, 76.95], 9.5);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap &copy; CARTO',
-                maxZoom: 14
-            }).addTo(map);
+        // Format ISO timestamp to IST (Asia/Kolkata) string
+        function formatIST(isoStr) {
+            if (!isoStr) return 'N/A';
+            try {
+                // Ensure properly parsed ISO date
+                const date = new Date(isoStr);
+                if (isNaN(date.getTime())) return isoStr;
 
-            fetchTimestamps();
+                return date.toLocaleString('en-IN', {
+                    timeZone: 'Asia/Kolkata',
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                }) + ' IST';
+            } catch (e) {
+                return isoStr;
+            }
         }
 
-        // Fetch available timestamps
-        async function fetchTimestamps() {
+        // Initialize Application
+        window.onload = function() {
+            initApp();
+        };
+
+        function initApp() {
+            setAppMode('LIVE'); // Force LIVE default on boot
+            startAutoRefreshTimer();
+        }
+
+        // Mode Switcher function
+        function setAppMode(mode) {
+            currentMode = mode;
+            const btnLive = document.getElementById('btn-mode-live');
+            const btnHist = document.getElementById('btn-mode-historical');
+            const viewLive = document.getElementById('view-live');
+            const viewHist = document.getElementById('view-historical');
+
+            if (mode === 'LIVE') {
+                btnLive.className = 'mode-btn active live';
+                btnHist.className = 'mode-btn';
+                viewLive.style.display = 'block';
+                viewHist.style.display = 'none';
+
+                fetchLiveWeather();
+                fetchLiveForecast();
+                if (!liveMap) {
+                    setTimeout(initLiveMap, 100);
+                } else {
+                    liveMap.invalidateSize();
+                }
+            } else {
+                btnLive.className = 'mode-btn';
+                btnHist.className = 'mode-btn active historical';
+                viewLive.style.display = 'none';
+                viewHist.style.display = 'block';
+
+                document.getElementById('status-badge').className = 'badge-status yellow';
+                document.getElementById('status-badge').innerHTML = '<span>📜 MODE: HISTORICAL REPLAY</span>';
+
+                if (!historicalMap) {
+                    setTimeout(initHistoricalMap, 100);
+                } else {
+                    historicalMap.invalidateSize();
+                }
+            }
+        }
+
+        // ─── LIVE MODE LOGIC ────────────────────────────────────────────────────────
+
+        async function fetchLiveWeather(manual = false) {
+            try {
+                const res = await fetch('/api/live/weather');
+                const data = await res.json();
+
+                if (data.status === 'historical_fallback' || !data.data) {
+                    showSystemAlert('⚠️ LIVE API UNAVAILABLE — Falling back to Historical Replay mode', 'warning');
+                    setAppMode('HISTORICAL_REPLAY');
+                    return;
+                }
+
+                const d = data.data;
+                const prov = data.provenance || {};
+
+                // Update Status Pill Badge
+                const statusBadge = document.getElementById('status-badge');
+                if (data.status === 'live') {
+                    statusBadge.className = 'badge-status green';
+                    statusBadge.innerHTML = `<span class="pulse-dot"></span> <span>Open-Meteo: LIVE (${data.freshness})</span>`;
+                } else if (data.status === 'cached') {
+                    statusBadge.className = 'badge-status yellow';
+                    statusBadge.innerHTML = `<span>Open-Meteo: CACHED (${data.freshness})</span>`;
+                }
+
+                // Weather Cards Update
+                document.getElementById('card-temp').textContent = `${d.temperature_c !== null ? d.temperature_c.toFixed(1) : '--'} °C`;
+                document.getElementById('card-feels').textContent = `Apparent: ${d.apparent_temperature_c !== null ? d.apparent_temperature_c.toFixed(1) : '--'} °C`;
+                document.getElementById('card-humidity').textContent = `${d.relative_humidity_pct !== null ? d.relative_humidity_pct : '--'} %`;
+                document.getElementById('card-rain').textContent = `${d.precipitation_mm !== null ? d.precipitation_mm.toFixed(1) : '0.0'} mm`;
+                document.getElementById('card-wind').textContent = `${d.wind_speed_kmh !== null ? d.wind_speed_kmh.toFixed(1) : '--'} km/h`;
+                document.getElementById('card-wind-dir').textContent = `Direction: ${d.wind_direction_deg !== null ? d.wind_direction_deg : '--'}° (${d.wind_speed_ms !== null ? d.wind_speed_ms : '--'} m/s)`;
+                document.getElementById('card-pressure').textContent = `${d.surface_pressure_hpa !== null ? Math.round(d.surface_pressure_hpa) : '--'} hPa`;
+                document.getElementById('card-cloud').textContent = `Cloud cover: ${d.cloud_cover_pct !== null ? d.cloud_cover_pct : '--'}%`;
+                document.getElementById('card-emoji').textContent = d.weather_emoji || '🌡️';
+                document.getElementById('card-desc').textContent = d.weather_description || 'Unknown';
+
+                // Provenance Details
+                document.getElementById('live-observed-time').textContent = `Observed: ${formatIST(d.timestamp)}`;
+                document.getElementById('prov-provider').textContent = prov.source || 'Open-Meteo';
+                document.getElementById('prov-observed').textContent = formatIST(prov.observed_at || d.timestamp);
+                document.getElementById('prov-fetched').textContent = formatIST(prov.fetched_at);
+                document.getElementById('prov-age').textContent = `${d.data_age_seconds !== undefined ? d.data_age_seconds : '--'} sec`;
+                document.getElementById('prov-freshness').textContent = prov.freshness || data.freshness;
+
+                const provBadge = document.getElementById('provenance-badge');
+                provBadge.textContent = prov.freshness || data.freshness;
+                provBadge.className = `conf-badge ${data.freshness === 'FRESH' ? 'conf-HIGH' : 'conf-MEDIUM'}`;
+
+                refreshSecondsRemaining = 300; // Reset countdown
+                if (manual) {
+                    showSystemAlert('Live weather refreshed successfully.', 'success', 3000);
+                }
+
+            } catch (err) {
+                console.error("Failed to fetch live weather:", err);
+                showSystemAlert('⚠️ LIVE DATA FETCH FAILED — Switching to Historical Replay', 'error');
+                setAppMode('HISTORICAL_REPLAY');
+            }
+        }
+
+        async function fetchLiveForecast() {
+            try {
+                const res = await fetch('/api/live/forecast?hours=24');
+                const data = await res.json();
+                const container = document.getElementById('forecast-timeline');
+                container.innerHTML = '';
+
+                if (!data.forecast_hours || data.forecast_hours.length === 0) {
+                    container.innerHTML = '<div style="color: var(--text-muted); font-size: 13px; padding: 10px;">Forecast timeline unavailable</div>';
+                    return;
+                }
+
+                data.forecast_hours.slice(0, 24).forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'timeline-card';
+                    
+                    let timeLabel = index === 0 ? 'NOW' : item.time ? item.time.split('T')[1].substring(0, 5) : `+${index}h`;
+                    card.innerHTML = `
+                        <div class="time">${timeLabel}</div>
+                        <div class="emoji">${item.weather_emoji || '⛅'}</div>
+                        <div class="temp">${item.temperature_c !== null ? Math.round(item.temperature_c) : '--'}°C</div>
+                        <div class="rain">${item.precipitation_mm !== null && item.precipitation_mm > 0 ? item.precipitation_mm.toFixed(1) + 'mm' : '0.0mm'}</div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                console.error("Failed to fetch live forecast:", err);
+            }
+        }
+
+        function initLiveMap() {
+            if (liveMap) return;
+            liveMap = L.map('map-live').setView([10.9, 76.95], 9.5);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19
+            }).addTo(liveMap);
+
+            loadLiveMapBoundaries();
+        }
+
+        async function loadLiveMapBoundaries() {
+            try {
+                const res = await fetch('/api/v1/geojson');
+                const geojson = await res.json();
+
+                if (geojsonLayerLive) {
+                    liveMap.removeLayer(geojsonLayerLive);
+                }
+
+                geojsonLayerLive = L.geoJSON(geojson, {
+                    style: function() {
+                        return {
+                            fillColor: '#3b82f6',
+                            weight: 1.2,
+                            opacity: 0.8,
+                            color: '#1e293b',
+                            fillOpacity: 0.35
+                        };
+                    },
+                    onEachFeature: function(feature, layer) {
+                        const props = feature.properties;
+                        const pName = props.panchayat_name || props.panchayat_code;
+                        const bName = props.block_name || '';
+
+                        const popupContent = `
+                            <div style="font-size: 13px;">
+                                <strong>${pName}</strong> (${bName})<br>
+                                <span style="color: #60a5fa;">LIVE Regional Weather (Coimbatore)</span><br>
+                                <span style="font-size: 11px; color: #9ca3af;">Model downscaling validated on 2024 test data.</span>
+                            </div>
+                        `;
+                        layer.bindTooltip(popupContent);
+                    }
+                }).addTo(liveMap);
+            } catch (err) {
+                console.error("Failed to load live map boundaries:", err);
+            }
+        }
+
+        function startAutoRefreshTimer() {
+            if (refreshTimer) clearInterval(refreshTimer);
+            refreshTimer = setInterval(() => {
+                if (currentMode === 'LIVE') {
+                    refreshSecondsRemaining--;
+                    if (refreshSecondsRemaining <= 0) {
+                        fetchLiveWeather();
+                        fetchLiveForecast();
+                        refreshSecondsRemaining = 300;
+                    }
+                    const mins = Math.floor(refreshSecondsRemaining / 60);
+                    const secs = refreshSecondsRemaining % 60;
+                    document.getElementById('refresh-countdown').textContent = `Next refresh: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                }
+            }, 1000);
+        }
+
+
+        // ─── HISTORICAL REPLAY LOGIC ────────────────────────────────────────────────
+
+        function initHistoricalMap() {
+            if (historicalMap) return;
+            historicalMap = L.map('map-historical').setView([10.9, 76.95], 9.5);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19
+            }).addTo(historicalMap);
+
+            fetchHistoricalTimestamps();
+        }
+
+        async function fetchHistoricalTimestamps() {
             try {
                 const res = await fetch('/api/v1/timestamps');
                 const data = await res.json();
@@ -514,31 +1013,30 @@
                 if (data.timestamps.length > 0) {
                     currentTimestamp = data.timestamps[0];
                 }
-                loadMapData();
+                loadHistoricalMapData();
                 loadPanchayatDetail(selectedPanchayatId);
             } catch (err) {
-                console.error("Failed to load timestamps:", err);
+                console.error("Failed to load historical timestamps:", err);
             }
         }
 
-        function setVariable(varName, btn) {
+        function setHistoricalVariable(varName, btn) {
             currentVariable = varName;
             document.querySelectorAll('.var-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            loadMapData();
+            loadHistoricalMapData();
             loadPanchayatDetail(selectedPanchayatId);
         }
 
-        function onFilterChange() {
+        function onHistoricalFilterChange() {
             currentTimestamp = document.getElementById('timestamp-select').value;
             currentLeadTime = parseInt(document.getElementById('leadtime-select').value);
-            loadMapData();
+            loadHistoricalMapData();
             loadPanchayatDetail(selectedPanchayatId);
         }
 
-        // Color palette helper
-        function getColor(props) {
-            if (!props.display_evaluable) return '#6b7280'; // Gray for NOT_EVALUABLE
+        function getHistoricalColor(props) {
+            if (!props.display_evaluable) return '#6b7280';
             const val = props.display_value;
             if (val === null || val === undefined) return '#6b7280';
 
@@ -551,21 +1049,20 @@
             }
         }
 
-        // Load GeoJSON and render map
-        async function loadMapData() {
+        async function loadHistoricalMapData() {
             try {
                 const url = `/api/v1/geojson?timestamp=${currentTimestamp}&variable=${currentVariable}&lead_time=${currentLeadTime}`;
                 const res = await fetch(url);
                 const geojson = await res.json();
 
-                if (geojsonLayer) {
-                    map.removeLayer(geojsonLayer);
+                if (geojsonLayerHist) {
+                    historicalMap.removeLayer(geojsonLayerHist);
                 }
 
-                geojsonLayer = L.geoJSON(geojson, {
+                geojsonLayerHist = L.geoJSON(geojson, {
                     style: function(feature) {
                         return {
-                            fillColor: getColor(feature.properties),
+                            fillColor: getHistoricalColor(feature.properties),
                             weight: 1.5,
                             opacity: 1,
                             color: '#1e293b',
@@ -576,7 +1073,7 @@
                         const props = feature.properties;
                         const pName = props.panchayat_name || props.panchayat_code;
                         const bName = props.block_name || '';
-                        
+
                         let popupText = `<strong>${pName}</strong> (${bName})<br>`;
                         if (!props.display_evaluable) {
                             popupText += `<span style="color: #9ca3af;">Not evaluable — insufficient historical events</span>`;
@@ -591,14 +1088,12 @@
                             loadPanchayatDetail(selectedPanchayatId);
                         });
                     }
-                }).addTo(map);
-
+                }).addTo(historicalMap);
             } catch (err) {
-                console.error("Failed to load map data:", err);
+                console.error("Failed to load historical map data:", err);
             }
         }
 
-        // Load Panchayat details
         async function loadPanchayatDetail(pid) {
             try {
                 const url = `/panchayat/${pid}/forecast?timestamp=${currentTimestamp}&lead_time=${currentLeadTime}`;
@@ -653,7 +1148,6 @@
             }
         }
 
-        // Load block vs panchayat comparison
         async function loadBlockComparison(blockName) {
             try {
                 const url = `/api/v1/block-comparison?block_name=${encodeURIComponent(blockName)}&timestamp=${currentTimestamp}&lead_time=${currentLeadTime}`;
@@ -681,7 +1175,19 @@
             }
         }
 
-        window.onload = initMap;
+        // Helper: Alert notification banner
+        function showSystemAlert(message, type = 'info', timeoutMs = 5000) {
+            const banner = document.getElementById('system-alert-banner');
+            banner.style.display = 'block';
+            banner.className = type === 'error' ? 'replay-banner' : type === 'warning' ? 'replay-banner' : 'live-banner';
+            banner.innerHTML = message;
+
+            if (timeoutMs > 0) {
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                }, timeoutMs);
+            }
+        }
     </script>
 </body>
 </html>
