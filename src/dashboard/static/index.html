@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GramDrishti — Terrain-Aware Panchayat Weather Downscaling</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --card-bg: #111827;
+            --card-border: #1f293d;
+            --accent-green: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-gray: #6b7280;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 16px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #111827 0%, #1e293b 100%);
+            padding: 20px 24px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .title-group h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .title-group h1 span.badge-brand {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .title-group p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .header-badges {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .badge-status {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #1f293d;
+            border: 1px solid #374151;
+        }
+
+        .badge-status.green { color: #34d399; border-color: rgba(52, 211, 153, 0.3); }
+        .badge-status.yellow { color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); }
+        .badge-status.blue { color: #60a5fa; border-color: rgba(96, 165, 250, 0.3); }
+
+        .toolbar {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tool-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        select, button {
+            background: #1e293b;
+            color: #fff;
+            border: 1px solid #374151;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        select:hover, button:hover {
+            border-color: #60a5fa;
+        }
+
+        .var-btn {
+            background: #1e293b;
+            border: 1px solid #374151;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .var-btn.active {
+            background: var(--accent-blue);
+            color: #fff;
+            border-color: #60a5fa;
+            font-weight: 600;
+        }
+
+        .replay-banner {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 16px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 10px;
+        }
+
+        .card-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: #f3f4f6;
+        }
+
+        #map {
+            height: 620px;
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            background: #0d1117;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .info-label { color: var(--text-muted); }
+        .info-val { font-weight: 600; color: #f3f4f6; }
+
+        .conf-badge {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .conf-HIGH { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .conf-MEDIUM { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .conf-LOW { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+        .conf-NOT_EVALUABLE { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.4); }
+
+        .uq-bar-container {
+            margin: 12px 0;
+            background: #1e293b;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .uq-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        .warning-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .not-eval-box {
+            background: rgba(107, 114, 128, 0.1);
+            border: 1px solid rgba(107, 114, 128, 0.3);
+            color: #d1d5db;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .comp-bar {
+            background: #1e293b;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .status-item {
+            background: #1e293b;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 11px;
+        }
+
+        .status-item span.icon { font-weight: 700; }
+        .status-item.ok span.icon { color: #34d399; }
+
+        footer {
+            margin-top: 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="title-group">
+            <h1>GRAMDRISHTI <span class="badge-brand">SIH PS 26074</span></h1>
+            <p>Terrain-Aware Panchayat Weather Downscaling & Agro-Advisory System</p>
+        </div>
+        <div class="header-badges">
+            <div class="badge-status blue">Pilot: Coimbatore, TN (180 GPs)</div>
+            <div class="badge-status yellow">DATA MODE: OFFLINE REPLAY</div>
+            <div class="badge-status green">STATUS: OPERATIONAL</div>
+        </div>
+    </header>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="tool-group">
+            <label for="timestamp-select">Replay Date:</label>
+            <select id="timestamp-select" onchange="onFilterChange()"></select>
+            <label for="leadtime-select">Lead Time:</label>
+            <select id="leadtime-select" onchange="onFilterChange()">
+                <option value="24">24 Hours</option>
+                <option value="48">48 Hours</option>
+                <option value="72">72 Hours</option>
+            </select>
+        </div>
+        <div class="tool-group">
+            <label>Variable:</label>
+            <button class="var-btn active" onclick="setVariable('temperature', this)">Temperature (°C)</button>
+            <button class="var-btn" onclick="setVariable('humidity', this)">Humidity (%)</button>
+            <button class="var-btn" onclick="setVariable('rain_1mm', this)">Rain ≥ 1mm</button>
+            <button class="var-btn" onclick="setVariable('rain_10mm', this)">Rain ≥ 10mm</button>
+            <button class="var-btn" onclick="setVariable('rain_25mm', this)">Rain ≥ 25mm</button>
+        </div>
+    </div>
+
+    <!-- Mandatory Historical Replay Banner -->
+    <div class="replay-banner">
+        ⚠️ HISTORICAL REPLAY — NOT LIVE FORECAST | Archived Pilot Test Period (May 01 – Jun 30, 2024)
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+
+        <!-- Left: Map Container -->
+        <div class="card">
+            <div class="card-header">
+                <h2 id="map-title">Panchayat Forecast Map — Coimbatore District</h2>
+                <span id="map-legend-info" class="badge-status blue">180 Gram Panchayats</span>
+            </div>
+            <div id="map"></div>
+        </div>
+
+        <!-- Right: Detail Panels -->
+        <div>
+            <!-- Panchayat Selection Panel -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Panchayat Detail</h2>
+                    <span id="p-conf-badge" class="conf-badge conf-HIGH">HIGH</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Panchayat:</span>
+                    <span class="info-val" id="p-name">Anaimalai Panchayat 1</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Panchayat ID:</span>
+                    <span class="info-val" id="p-id">GP_33_12_0001</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Block Name:</span>
+                    <span class="info-val" id="p-block">Anaimalai</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">1 km Grid Cells:</span>
+                    <span class="info-val" id="p-cells">9 cells (OK)</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Active Fallback Source:</span>
+                    <span class="info-val" id="p-fallback" style="color: #60a5fa;">PRIMARY_MODEL</span>
+                </div>
+            </div>
+
+            <!-- Uncertainty Visualization Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Uncertainty Quantification (CQR)</h2>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Temperature (P50):</span>
+                    <span class="info-val" id="temp-val">32.40 °C</span>
+                </div>
+                <div class="uq-bar-container">
+                    <div style="font-size: 11px; color: var(--text-muted); text-align: center;">Temperature Conformal Interval (87.7% Cov)</div>
+                    <div class="uq-bar">
+                        <span style="color: #60a5fa;">P10: <span id="temp-p10">30.04</span>°C</span>
+                        <span style="color: #34d399;">P50: <span id="temp-p50">32.40</span>°C</span>
+                        <span style="color: #f87171;">P90: <span id="temp-p90">34.76</span>°C</span>
+                    </div>
+                </div>
+
+                <div class="info-row" style="margin-top: 14px;">
+                    <span class="info-label">Humidity (P50):</span>
+                    <span class="info-val" id="hum-val">68.50 %</span>
+                </div>
+                <div class="uq-bar-container">
+                    <div style="font-size: 11px; color: var(--text-muted); text-align: center;">Humidity Interval Width: 27.61%</div>
+                    <div class="uq-bar">
+                        <span>P10: <span id="hum-p10">54.70</span>%</span>
+                        <span>P50: <span id="hum-p50">68.50</span>%</span>
+                        <span>P90: <span id="hum-p90">82.30</span>%</span>
+                    </div>
+                </div>
+                <div id="hum-warning-box" class="warning-box">
+                    ⚠️ LOW RELIABILITY — temporal distribution shift detected (Coverage 20.15% &lt; 70% target)
+                </div>
+            </div>
+
+            <!-- Block vs Panchayat Comparison -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Block vs Panchayat Downscaling</h2>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
+                    Coarse Forecast: <strong style="color: #fff;" id="coarse-temp">32.40 °C</strong> (ECMWF IFS) vs Downscaled Panchayats in Block:
+                </div>
+                <div id="block-comp-container"></div>
+                <div style="font-size: 10px; color: var(--text-muted); margin-top: 6px; text-align: right;">
+                    Data Source Label: <em>Historical replay / model output</em>
+                </div>
+            </div>
+
+            <!-- Agro-Advisory Panel -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Evidence-Gated Agro-Advisory</h2>
+                    <span id="adv-status-badge" class="conf-badge conf-HIGH">ACTIONABLE</span>
+                </div>
+                <div style="font-size: 13px; line-height: 1.5;" id="adv-text-content">
+                    Optimal temperature for crop growth. Schedule light irrigation in early morning.
+                </div>
+            </div>
+
+            <!-- System Health Panel -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>System Status Matrix</h2>
+                </div>
+                <div class="status-grid">
+                    <div class="status-item ok"><span class="icon">✓</span> Boundaries</div>
+                    <div class="status-item ok"><span class="icon">✓</span> Terrain/GIS</div>
+                    <div class="status-item ok"><span class="icon">✓</span> Forecast</div>
+                    <div class="status-item ok"><span class="icon">✓</span> Observations</div>
+                    <div class="status-item ok"><span class="icon">✓</span> Baseline</div>
+                    <div class="status-item ok"><span class="icon">✓</span> ML Correction</div>
+                    <div class="status-item ok"><span class="icon">✓</span> Uncertainty</div>
+                    <div class="status-item ok"><span class="icon">✓</span> Reliability</div>
+                    <div class="status-item ok"><span class="icon">✓</span> Offline Replay</div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Scientific Disclaimer Footer -->
+    <footer>
+        <p><strong>Scientific Disclaimer:</strong> GramDrishti is a validation-driven correction layer over coarse weather forecasts. It does not replace operational forecasts or establish panchayat-scale ground truth.</p>
+        <p><strong>Pilot Dataset Note:</strong> Forecast source in this pilot is a stand-in historical forecast dataset derived from Open-Meteo ECMWF/GFS archives for Coimbatore District (180 Gram Panchayats).</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        let currentVariable = 'temperature';
+        let currentTimestamp = '2024-05-01';
+        let currentLeadTime = 24;
+        let selectedPanchayatId = 'GP_33_12_0001';
+        let map, geojsonLayer;
+
+        // Initialize Map
+        function initMap() {
+            map = L.map('map').setView([10.9, 76.95], 9.5);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap &copy; CARTO',
+                maxZoom: 14
+            }).addTo(map);
+
+            fetchTimestamps();
+        }
+
+        // Fetch available timestamps
+        async function fetchTimestamps() {
+            try {
+                const res = await fetch('/api/v1/timestamps');
+                const data = await res.json();
+                const sel = document.getElementById('timestamp-select');
+                sel.innerHTML = '';
+                data.timestamps.forEach(ts => {
+                    const opt = document.createElement('option');
+                    opt.value = ts;
+                    opt.textContent = ts;
+                    sel.appendChild(opt);
+                });
+                if (data.timestamps.length > 0) {
+                    currentTimestamp = data.timestamps[0];
+                }
+                loadMapData();
+                loadPanchayatDetail(selectedPanchayatId);
+            } catch (err) {
+                console.error("Failed to load timestamps:", err);
+            }
+        }
+
+        function setVariable(varName, btn) {
+            currentVariable = varName;
+            document.querySelectorAll('.var-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            loadMapData();
+            loadPanchayatDetail(selectedPanchayatId);
+        }
+
+        function onFilterChange() {
+            currentTimestamp = document.getElementById('timestamp-select').value;
+            currentLeadTime = parseInt(document.getElementById('leadtime-select').value);
+            loadMapData();
+            loadPanchayatDetail(selectedPanchayatId);
+        }
+
+        // Color palette helper
+        function getColor(props) {
+            if (!props.display_evaluable) return '#6b7280'; // Gray for NOT_EVALUABLE
+            const val = props.display_value;
+            if (val === null || val === undefined) return '#6b7280';
+
+            if (currentVariable === 'temperature') {
+                return val > 33.5 ? '#ef4444' : val > 31.5 ? '#f59e0b' : '#10b981';
+            } else if (currentVariable === 'humidity') {
+                return props.humidity_confidence === 'LOW' ? '#ef4444' : '#3b82f6';
+            } else {
+                return val > 0.1 ? '#3b82f6' : '#9ca3af';
+            }
+        }
+
+        // Load GeoJSON and render map
+        async function loadMapData() {
+            try {
+                const url = `/api/v1/geojson?timestamp=${currentTimestamp}&variable=${currentVariable}&lead_time=${currentLeadTime}`;
+                const res = await fetch(url);
+                const geojson = await res.json();
+
+                if (geojsonLayer) {
+                    map.removeLayer(geojsonLayer);
+                }
+
+                geojsonLayer = L.geoJSON(geojson, {
+                    style: function(feature) {
+                        return {
+                            fillColor: getColor(feature.properties),
+                            weight: 1.5,
+                            opacity: 1,
+                            color: '#1e293b',
+                            fillOpacity: 0.7
+                        };
+                    },
+                    onEachFeature: function(feature, layer) {
+                        const props = feature.properties;
+                        const pName = props.panchayat_name || props.panchayat_code;
+                        const bName = props.block_name || '';
+                        
+                        let popupText = `<strong>${pName}</strong> (${bName})<br>`;
+                        if (!props.display_evaluable) {
+                            popupText += `<span style="color: #9ca3af;">Not evaluable — insufficient historical events</span>`;
+                        } else {
+                            popupText += `${currentVariable}: ${props.display_value} ${props.display_unit || ''}<br>`;
+                            popupText += `Reliability: ${props.display_confidence}`;
+                        }
+                        layer.bindTooltip(popupText);
+
+                        layer.on('click', function() {
+                            selectedPanchayatId = props.panchayat_code;
+                            loadPanchayatDetail(selectedPanchayatId);
+                        });
+                    }
+                }).addTo(map);
+
+            } catch (err) {
+                console.error("Failed to load map data:", err);
+            }
+        }
+
+        // Load Panchayat details
+        async function loadPanchayatDetail(pid) {
+            try {
+                const url = `/panchayat/${pid}/forecast?timestamp=${currentTimestamp}&lead_time=${currentLeadTime}`;
+                const res = await fetch(url);
+                const d = await res.json();
+
+                document.getElementById('p-id').textContent = d.panchayat_id;
+                document.getElementById('p-name').textContent = d.panchayat_name;
+                document.getElementById('p-block').textContent = d.block_name;
+                document.getElementById('p-cells').textContent = `${d.location.grid_cell_count} cells (${d.location.subgrid_status})`;
+                document.getElementById('p-fallback').textContent = d.fallback.source;
+
+                const badge = document.getElementById('p-conf-badge');
+                badge.textContent = d.reliability.overall;
+                badge.className = `conf-badge conf-${d.reliability.overall}`;
+
+                // Temperature UQ
+                document.getElementById('temp-val').textContent = `${d.forecast.temperature.toFixed(2)} °C`;
+                document.getElementById('temp-p10').textContent = d.uncertainty.temperature.p10.toFixed(2);
+                document.getElementById('temp-p50').textContent = d.uncertainty.temperature.p50.toFixed(2);
+                document.getElementById('temp-p90').textContent = d.uncertainty.temperature.p90.toFixed(2);
+
+                // Humidity UQ
+                document.getElementById('hum-val').textContent = `${d.forecast.humidity.toFixed(2)} %`;
+                document.getElementById('hum-p10').textContent = d.uncertainty.humidity.p10.toFixed(2);
+                document.getElementById('hum-p50').textContent = d.uncertainty.humidity.p50.toFixed(2);
+                document.getElementById('hum-p90').textContent = d.uncertainty.humidity.p90.toFixed(2);
+
+                const humWarn = document.getElementById('hum-warning-box');
+                if (d.reliability.humidity === 'LOW') {
+                    humWarn.style.display = 'block';
+                } else {
+                    humWarn.style.display = 'none';
+                }
+
+                // Advisory
+                let activeAdv = d.advisories[currentVariable] || d.advisories['temperature'];
+                if (currentVariable === 'rain_10mm' || currentVariable === 'rain_25mm') {
+                    activeAdv = d.advisories[currentVariable];
+                }
+
+                const advBadge = document.getElementById('adv-status-badge');
+                advBadge.textContent = activeAdv.advisory_status;
+                advBadge.className = `conf-badge conf-${activeAdv.advisory_status === 'ACTIONABLE' ? 'HIGH' : activeAdv.advisory_status === 'CAUTIONARY' ? 'MEDIUM' : 'NOT_EVALUABLE'}`;
+                document.getElementById('adv-text-content').textContent = activeAdv.advisory_message;
+
+                // Load block comparison
+                loadBlockComparison(d.block_name);
+
+            } catch (err) {
+                console.error("Failed to load panchayat detail:", err);
+            }
+        }
+
+        // Load block vs panchayat comparison
+        async function loadBlockComparison(blockName) {
+            try {
+                const url = `/api/v1/block-comparison?block_name=${encodeURIComponent(blockName)}&timestamp=${currentTimestamp}&lead_time=${currentLeadTime}`;
+                const res = await fetch(url);
+                const data = await res.json();
+
+                document.getElementById('coarse-temp').textContent = `${data.coarse_district_forecast.temperature.toFixed(2)} °C`;
+                const container = document.getElementById('block-comp-container');
+                container.innerHTML = '';
+
+                data.downscaled_panchayats.slice(0, 5).forEach(p => {
+                    const row = document.createElement('div');
+                    row.className = 'comp-bar';
+                    const deltaSign = p.temp_delta_from_coarse >= 0 ? '+' : '';
+                    row.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                            <span>${p.panchayat_name}</span>
+                            <span style="font-weight: 700; color: #60a5fa;">${p.downscaled_temperature.toFixed(2)} °C (${deltaSign}${p.temp_delta_from_coarse} °C)</span>
+                        </div>
+                    `;
+                    container.appendChild(row);
+                });
+            } catch (err) {
+                console.error("Failed to load block comparison:", err);
+            }
+        }
+
+        window.onload = initMap;
+    </script>
+</body>
+</html>

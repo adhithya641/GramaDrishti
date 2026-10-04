@@ -1,0 +1,39 @@
+{
+  "timestamp": "2026-09-30T10:39:52.003367+00:00",
+  "phase": 7,
+  "is_valid": true,
+  "summary": {
+    "record_counts": {
+      "total_panchayat_records": 32940,
+      "subgrid_unresolved_panchayats": 366
+    },
+    "reliability_classification_evidence": {
+      "temperature_confidence": "HIGH",
+      "humidity_confidence": "LOW",
+      "rain_1mm_confidence": "MEDIUM",
+      "rain_10mm_confidence": "NOT_EVALUABLE",
+      "rain_25mm_confidence": "NOT_EVALUABLE"
+    },
+    "reliability_reasons_audit": {
+      "humidity_reasons": [
+        "CQR_TEST_COVERAGE_BELOW_TARGET",
+        "TEMPORAL_DISTRIBUTION_SHIFT_DETECTED"
+      ],
+      "rain_10mm_reasons": [
+        "NO_POSITIVE_EVENTS_IN_CALIBRATION",
+        "NO_POSITIVE_EVENTS_IN_TRAIN"
+      ],
+      "rain_25mm_reasons": [
+        "NO_POSITIVE_EVENTS_IN_CALIBRATION",
+        "NO_POSITIVE_EVENTS_IN_TEST",
+        "NO_POSITIVE_EVENTS_IN_TRAIN"
+      ]
+    },
+    "sanity_checks": {
+      "humidity_low_confidence_verified": true,
+      "rain_10mm_not_evaluable_verified": true,
+      "rain_25mm_not_evaluable_verified": true,
+      "subgrid_unresolved_flag_preserved": true
+    }
+  }
+}
