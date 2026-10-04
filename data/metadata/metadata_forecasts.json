@@ -2,7 +2,7 @@
   "dataset_name": "Coarse Weather Forecasts",
   "source": "Open-Meteo Historical Forecast Archive (ECMWF IFS / GFS Model Runs)",
   "source_url": "https://archive-api.open-meteo.com",
-  "download_date": "2026-09-29",
+  "download_date": "2026-10-04",
   "original_filename": "synth_forecasts.csv",
   "format": "csv",
   "crs": "EPSG:4326",
@@ -27,7 +27,7 @@
   "validation_summary": {
     "dataset_name": "Coarse Weather Forecasts",
     "source_key": "forecasts",
-    "timestamp": "2026-09-29T20:03:39.215371+00:00",
+    "timestamp": "2026-10-04T11:24:26.064020+00:00",
     "source": "UNKNOWN",
     "status": "READY",
     "is_valid": true,

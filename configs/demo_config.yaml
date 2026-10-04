@@ -1,0 +1,49 @@
+# GramDrishti Phase 9 — Final Demo Configuration
+# SIH PS 26074 — Panchayat-Level Weather Downscaling
+
+project: GramDrishti
+phase: 9
+description: Deterministic offline demonstration settings for SIH presentation
+
+mode: historical_replay
+
+pilot:
+  district: Coimbatore
+  state: Tamil Nadu
+  panchayats_count: 180
+  blocks_count: 12
+  grid_cells_count: 10530
+  stations_count: 8
+
+replay:
+  start_date: "2024-05-01"
+  end_date: "2024-06-30"
+  total_timestamps: 61
+  default_timestamp: "2024-05-01"
+
+forecast:
+  allowed_leads:
+    - 24
+    - 48
+    - 72
+  default_lead_time: 24
+
+paths:
+  reliability_csv: "data/processed/predictions/panchayat_reliability.csv"
+  geojson_boundaries: "data/processed/boundaries/coimbatore_panchayats_processed.geojson"
+  grid_1km: "data/processed/geospatial/grid_1km.csv"
+  metadata_dir: "data/metadata"
+  reliability_config: "configs/reliability_config.yaml"
+
+display:
+  historical_replay_warning: true
+  show_uncertainty: true
+  show_reliability: true
+  show_fallback: true
+  show_advisory: true
+  offline_mode_label: "DATA MODE: OFFLINE REPLAY"
+  last_updated: "2026-09-30T10:39:52.003367+00:00"
+
+server:
+  host: "127.0.0.1"
+  port: 8000

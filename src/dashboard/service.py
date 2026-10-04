@@ -272,10 +272,22 @@ class DashboardDataService:
             "fallback": {
                 "used": fb_used,
                 "source": fb_source,
-                "temperature_source": "PRIMARY_MODEL" if temp_conf in ["HIGH", "MEDIUM"] else "BASELINE_B2",
-                "humidity_source": "PRIMARY_MODEL_LOW_RELIABILITY",
-                "rain_10mm_source": "NOT_EVALUABLE",
-                "rain_25mm_source": "NOT_EVALUABLE"
+                "temperature": {
+                    "source": "PRIMARY_MODEL" if temp_conf in ["HIGH", "MEDIUM"] else "BASELINE_B2",
+                    "selected_value": temp
+                },
+                "humidity": {
+                    "source": "BASELINE_B2" if hum_conf == "LOW" else "PRIMARY_MODEL_LOW_RELIABILITY",
+                    "selected_value": hum
+                },
+                "rain_10mm": {
+                    "source": "NONE_NOT_EVALUABLE",
+                    "selected_value": None
+                },
+                "rain_25mm": {
+                    "source": "NONE_NOT_EVALUABLE",
+                    "selected_value": None
+                }
             },
             "advisories": advisories
         }
