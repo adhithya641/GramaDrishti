@@ -440,5 +440,137 @@ def test_14_fastapi_live_endpoints():
         assert meta_res.status_code == 200
         meta_json = meta_res.json()
         assert meta_json["default_mode"] == "LIVE"
-        assert meta_json["phase"] == "10B"
+        assert meta_json["phase"] in ("10B", "10C")
+
+
+# ─── Test 15: Phase 10C UI Mutual Exclusion & HTML State Integrity ───────────
+
+def test_15_index_html_ui_mutual_exclusion():
+    """Verify index.html contains isolated view containers, single mode switcher, and LIVE default."""
+    html_path = os.path.join("src", "dashboard", "static", "index.html")
+    assert os.path.exists(html_path)
+
+    with open(html_path, "r", encoding="utf-8") as f:
+        html = f.read()
+
+    # 1. Mutually exclusive containers exist
+    assert 'id="view-live"' in html
+    assert 'id="view-historical"' in html
+    assert 'display: none;' in html  # Historical view hidden by default
+
+    # 2. Default app mode is LIVE
+    assert "let currentMode = 'LIVE';" in html or 'let currentMode = "LIVE";' in html
+
+    # 3. Single mode switcher buttons
+    assert 'id="btn-mode-live"' in html
+    assert 'id="btn-mode-historical"' in html
+
+    # 4. Header status badge isolation element
+    assert 'id="header-status-badge"' in html
+
+    # 5. Live view contains live weather elements
+    assert 'id="card-temp"' in html
+    assert 'id="card-humidity"' in html
+    assert 'id="card-rain"' in html
+    assert 'id="card-wind"' in html
+    assert 'id="forecast-timeline"' in html
+    assert 'LIVE REGIONAL WEATHER' in html
+
+
+def test_16_live_weather_endpoint_no_2024_dates():
+    """Live weather API response must contain current timestamp, not 2024 historical dates."""
+    from fastapi.testclient import TestClient
+    from src.dashboard.app import app
+
+    client = TestClient(app)
+    with patch("src.dashboard.app.fetch_live_weather") as mock_fetch:
+        mock_fetch.return_value = {
+            "status": "live",
+            "data": _parse_response(MOCK_OPEN_METEO_RESPONSE, time.time()),
+            "provenance": {
+                "mode": "LIVE",
+                "source": "Open-Meteo",
+                "latitude": 11.0168,
+                "longitude": 76.9558,
+                "observed_at": "2026-10-04T20:45",
+                "fetched_at": "2026-10-04T15:30:00+00:00",
+                "data_age_seconds": 5.0,
+                "freshness": "LIVE_FRESH",
+            },
+            "error": None,
+            "cache_used": False,
+        }
+        res = client.get("/api/live/weather")
+        assert res.status_code == 200
+        payload = res.json()
+        assert payload["status"] == "live"
+        assert "2024" not in payload["data"]["timestamp"]
+        assert "2026" in payload["data"]["timestamp"]
+        assert payload["provenance"]["mode"] == "LIVE"
+
+
+def test_17_historical_timestamps_endpoint_returns_2024_dates():
+    """Historical timestamps endpoint returns 2024 dates for replay mode."""
+    from fastapi.testclient import TestClient
+    from src.dashboard.app import app
+
+    client = TestClient(app)
+    res = client.get("/api/v1/timestamps")
+    assert res.status_code == 200
+    ts_list = res.json().get("timestamps", [])
+    assert len(ts_list) > 0
+    assert any("2024" in ts for ts in ts_list)
+
+
+def test_18_live_forecast_endpoint():
+    """Live forecast endpoint returns hourly entries from Open-Meteo payload."""
+    from fastapi.testclient import TestClient
+    from src.dashboard.app import app
+
+    client = TestClient(app)
+    with patch("src.dashboard.app.fetch_live_weather") as mock_fetch:
+        mock_fetch.return_value = {
+            "status": "live",
+            "data": _parse_response(MOCK_OPEN_METEO_RESPONSE, time.time()),
+            "error": None,
+        }
+        res = client.get("/api/live/forecast?hours=12")
+        assert res.status_code == 200
+        data = res.json()
+        assert data["status"] == "live"
+        assert len(data["forecast_hours"]) == 6
+
+
+def test_19_live_status_endpoint():
+    """Live status endpoint returns reachability and freshness status."""
+    from fastapi.testclient import TestClient
+    from src.dashboard.app import app
+
+    client = TestClient(app)
+    with patch("src.dashboard.app.fetch_live_weather") as mock_fetch:
+        mock_fetch.return_value = {
+            "status": "live",
+            "data": _parse_response(MOCK_OPEN_METEO_RESPONSE, time.time()),
+            "error": None,
+        }
+        res = client.get("/api/live/status")
+        assert res.status_code == 200
+        data = res.json()
+        assert data["live_api_reachable"] is True
+        assert data["fetch_status"] == "live"
+
+
+def test_20_live_source_endpoint():
+    """Live source endpoint returns Open-Meteo provider metadata and attribution."""
+    from fastapi.testclient import TestClient
+    from src.dashboard.app import app
+
+    client = TestClient(app)
+    res = client.get("/api/live/source")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["provider"] == "Open-Meteo"
+    assert "CC BY 4.0" in data["attribution"]
+    assert data["location"]["latitude"] == 11.0168
+
 

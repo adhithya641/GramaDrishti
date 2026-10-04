@@ -102,14 +102,14 @@
             gap: 6px;
         }
 
-        .mode-btn.active.live {
+        .mode-btn.active-live {
             background: rgba(16, 185, 129, 0.2);
             color: #34d399;
             border: 1px solid rgba(16, 185, 129, 0.4);
             box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
         }
 
-        .mode-btn.active.historical {
+        .mode-btn.active-historical {
             background: rgba(245, 158, 11, 0.2);
             color: #fbbf24;
             border: 1px solid rgba(245, 158, 11, 0.4);
@@ -284,7 +284,7 @@
 
         /* Map styling */
         #map-live, #map-historical {
-            height: 540px;
+            height: 520px;
             width: 100%;
             border-radius: 10px;
             border: 1px solid var(--card-border);
@@ -439,35 +439,35 @@
         </div>
 
         <div class="header-controls">
-            <!-- Mode Switcher -->
+            <!-- Single Mode Switcher Toggle Group -->
             <div class="mode-toggle">
-                <button id="btn-mode-live" class="mode-btn active live" onclick="setAppMode('LIVE')">
-                    <span class="pulse-dot" id="live-dot"></span> ● LIVE
+                <button id="btn-mode-live" class="mode-btn active-live" onclick="setAppMode('LIVE')">
+                    <span class="pulse-dot"></span> 🟢 LIVE
                 </button>
                 <button id="btn-mode-historical" class="mode-btn" onclick="setAppMode('HISTORICAL_REPLAY')">
                     📜 HISTORICAL REPLAY
                 </button>
             </div>
 
-            <!-- Status Badge -->
-            <div id="status-badge" class="badge-status green">
-                <span>Open-Meteo: CONNECTED</span>
+            <!-- Single Dynamic Header Status Pill -->
+            <div id="header-status-badge" class="badge-status green">
+                <span class="pulse-dot"></span> <span id="header-status-text">🟢 LIVE | Open-Meteo</span>
             </div>
         </div>
     </header>
 
-    <!-- Alert / Fallback Notice (Dynamic) -->
+    <!-- Dynamic System Notification Banner -->
     <div id="system-alert-banner" style="display: none;"></div>
 
     <!-- ══════════════════════════════════════════════════════════════════════════ -->
-    <!-- VIEW 1: LIVE MODE (DEFAULT) -->
+    <!-- VIEW 1: LIVE MODE (DEFAULT & ISOLATED) -->
     <!-- ══════════════════════════════════════════════════════════════════════════ -->
     <div id="view-live">
         <!-- Live Status Bar & Auto Refresh Toolbar -->
         <div class="live-banner">
             <div>
-                <span style="color: #34d399; font-weight: 700;">● LIVE MODE</span> &mdash; Current Coimbatore Regional Weather
-                <span style="font-size: 12px; color: var(--text-muted); margin-left: 10px;" id="live-observed-time">Fetching live data...</span>
+                <span style="color: #34d399; font-weight: 700;">🟢 LIVE MODE</span> &mdash; Current Coimbatore Weather
+                <span style="font-size: 12px; color: var(--text-muted); margin-left: 10px;" id="live-observed-time">Fetching live weather...</span>
             </div>
             <div style="display: flex; align-items: center; gap: 12px;">
                 <span style="font-size: 12px; color: var(--text-muted);" id="refresh-countdown">Next refresh: 5:00</span>
@@ -475,7 +475,7 @@
             </div>
         </div>
 
-        <!-- Live Current Weather Cards Grid -->
+        <!-- 4 Core Weather Summary Cards -->
         <div class="live-grid">
             <div class="weather-card">
                 <div class="card-title">🌡️ Temperature</div>
@@ -500,43 +500,54 @@
                 <div class="card-value" id="card-wind">-- km/h</div>
                 <div class="card-sub" id="card-wind-dir">Direction: --°</div>
             </div>
+        </div>
 
-            <div class="weather-card">
-                <div class="card-title">🧭 Surface Pressure</div>
-                <div class="card-value" id="card-pressure">-- hPa</div>
-                <div class="card-sub" id="card-cloud">Cloud cover: --%</div>
-            </div>
-
-            <div class="weather-card">
-                <div class="card-title">🌤️ Weather Condition</div>
-                <div class="card-value" style="font-size: 20px; line-height: 1.2;" id="card-condition">
-                    <span id="card-emoji">⛅</span> <span id="card-desc">--</span>
+        <!-- Current Conditions & Rain Timeline Row -->
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 16px;">
+            <!-- Current Conditions Details -->
+            <div class="card" style="margin-bottom: 0;">
+                <div class="card-header">
+                    <h2>☁️ Current Conditions</h2>
                 </div>
-                <div class="card-sub">WMO standard code</div>
+                <div style="font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                    <span id="card-emoji">☁️</span> <span id="card-desc">Overcast</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Surface Pressure:</span>
+                    <span class="info-val" id="card-pressure">-- hPa</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Cloud Cover:</span>
+                    <span class="info-val" id="card-cloud">-- %</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Wind Direction:</span>
+                    <span class="info-val" id="card-wind-dir-text">--</span>
+                </div>
+            </div>
+
+            <!-- Hourly Forecast Timeline -->
+            <div class="card" style="margin-bottom: 0;">
+                <div class="card-header">
+                    <h2>📈 Hourly Forecast Timeline (Next 24 Hours)</h2>
+                    <span class="badge-status blue">Source: Open-Meteo</span>
+                </div>
+                <div class="forecast-timeline-container" id="forecast-timeline">
+                    <div style="color: var(--text-muted); font-size: 13px; padding: 10px;">Loading forecast timeline...</div>
+                </div>
             </div>
         </div>
 
-        <!-- Hourly Forecast Timeline -->
-        <div class="card">
-            <div class="card-header">
-                <h2>📈 Hourly Forecast Timeline (Next 24–48 Hours)</h2>
-                <span class="badge-status blue">Source: Open-Meteo API</span>
-            </div>
-            <div class="forecast-timeline-container" id="forecast-timeline">
-                <div style="color: var(--text-muted); font-size: 13px; padding: 10px;">Loading hourly forecast timeline...</div>
-            </div>
-        </div>
-
-        <!-- Live Layout Grid: Map + Provenance -->
+        <!-- Live Layout Grid: Map Context + Provenance -->
         <div class="main-grid">
-            <!-- Left: Live Map -->
+            <!-- Left: Live Map Context -->
             <div class="card">
                 <div class="card-header">
-                    <h2>🗺️ Coimbatore Gram Panchayat Map Context</h2>
+                    <h2>🗺️ Coimbatore Regional Weather Context</h2>
                     <span class="badge-status green">180 Gram Panchayats</span>
                 </div>
-                <div style="font-size: 12px; color: #fbbf24; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); padding: 8px 12px; border-radius: 6px; margin-bottom: 12px;">
-                    ℹ️ <strong>LIVE REGIONAL WEATHER</strong> — Visualizing current Open-Meteo Coimbatore observations. (Panchayat-level ML downscaling is validated on historical 2024 test data).
+                <div style="font-size: 12px; color: #60a5fa; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); padding: 8px 12px; border-radius: 6px; margin-bottom: 12px;">
+                    ℹ️ <strong>LIVE REGIONAL WEATHER</strong> — Direct Open-Meteo observation for Coimbatore. (Live regional weather — not validated panchayat-level downscaling).
                 </div>
                 <div id="map-live"></div>
             </div>
@@ -545,13 +556,17 @@
             <div>
                 <div class="card">
                     <div class="card-header">
-                        <h2>📡 Live Data Provenance</h2>
+                        <h2>📡 Data Provenance</h2>
                         <span id="provenance-badge" class="conf-badge conf-HIGH">LIVE_FRESH</span>
                     </div>
 
                     <div class="info-row">
                         <span class="info-label">Provider:</span>
                         <span class="info-val" id="prov-provider">Open-Meteo</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Data Access:</span>
+                        <span class="info-val">Public API (No key required)</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Location:</span>
@@ -583,17 +598,17 @@
                     </div>
 
                     <div style="margin-top: 14px; font-size: 11px; color: var(--text-muted); background: #1e293b; padding: 10px; border-radius: 6px; line-height: 1.5;">
-                        <strong>Attribution:</strong> Weather data provided by Open-Meteo under CC BY 4.0. No API key required for public regional ingestion.
+                        <strong>Attribution:</strong> Open-Meteo.com — Open data under CC BY 4.0.
                     </div>
                 </div>
 
                 <div class="card">
                     <div class="card-header">
-                        <h2>ℹ️ Scientific Distinction Notice</h2>
+                        <h2>ℹ️ Scientific Distinction Rule</h2>
                     </div>
                     <div style="font-size: 12px; color: var(--text-muted); line-height: 1.6;">
-                        <p style="margin-bottom: 8px;"><strong>LIVE MODE:</strong> Displays real-time regional weather for Coimbatore from Open-Meteo APIs. Intended for live monitoring.</p>
-                        <p><strong>HISTORICAL REPLAY MODE:</strong> Runs the validated GramDrishti ML downscaling pipeline over the 2024 test period (180 Gram Panchayats, 1 km grid, Conformal UQ, Evidence-Gated Crop Advisories).</p>
+                        <p style="margin-bottom: 8px;"><strong>LIVE MODE:</strong> Ingests current regional weather for Coimbatore from Open-Meteo API. Does NOT output unvalidated ML downscaling.</p>
+                        <p><strong>HISTORICAL REPLAY MODE:</strong> Displays the validated GramDrishti ML downscaling model results for the Jan–Jun 2024 test period.</p>
                     </div>
                 </div>
             </div>
@@ -602,7 +617,7 @@
 
 
     <!-- ══════════════════════════════════════════════════════════════════════════ -->
-    <!-- VIEW 2: HISTORICAL REPLAY MODE -->
+    <!-- VIEW 2: HISTORICAL REPLAY MODE (ISOLATED) -->
     <!-- ══════════════════════════════════════════════════════════════════════════ -->
     <div id="view-historical" style="display: none;">
         <!-- Mandatory Historical Replay Banner -->
@@ -737,7 +752,7 @@
 
     <!-- Scientific Disclaimer Footer -->
     <footer>
-        <p><strong>Scientific Disclaimer:</strong> GramDrishti is a validation-driven correction layer over coarse weather forecasts. Live weather data is fetched from Open-Meteo API. Historical downscaling model results represent the Jan–Jun 2024 test period.</p>
+        <p><strong>Scientific Disclaimer:</strong> GramDrishti is a validation-driven correction layer over coarse weather forecasts. Live weather is fetched from Open-Meteo API. Historical downscaling model results represent the Jan–Jun 2024 test period.</p>
     </footer>
 
     <!-- JavaScript Application Logic -->
@@ -758,7 +773,6 @@
         function formatIST(isoStr) {
             if (!isoStr) return 'N/A';
             try {
-                // Ensure properly parsed ISO date
                 const date = new Date(isoStr);
                 if (isNaN(date.getTime())) return isoStr;
 
@@ -787,19 +801,24 @@
             startAutoRefreshTimer();
         }
 
-        // Mode Switcher function
+        // Mode Switcher function - Strict mutually exclusive view state management
         function setAppMode(mode) {
             currentMode = mode;
             const btnLive = document.getElementById('btn-mode-live');
             const btnHist = document.getElementById('btn-mode-historical');
             const viewLive = document.getElementById('view-live');
             const viewHist = document.getElementById('view-historical');
+            const headerStatus = document.getElementById('header-status-badge');
+            const headerStatusText = document.getElementById('header-status-text');
 
             if (mode === 'LIVE') {
-                btnLive.className = 'mode-btn active live';
+                btnLive.className = 'mode-btn active-live';
                 btnHist.className = 'mode-btn';
                 viewLive.style.display = 'block';
                 viewHist.style.display = 'none';
+
+                headerStatus.className = 'badge-status green';
+                headerStatus.innerHTML = '<span class="pulse-dot"></span> <span id="header-status-text">🟢 LIVE | Open-Meteo</span>';
 
                 fetchLiveWeather();
                 fetchLiveForecast();
@@ -810,17 +829,18 @@
                 }
             } else {
                 btnLive.className = 'mode-btn';
-                btnHist.className = 'mode-btn active historical';
+                btnHist.className = 'mode-btn active-historical';
                 viewLive.style.display = 'none';
                 viewHist.style.display = 'block';
 
-                document.getElementById('status-badge').className = 'badge-status yellow';
-                document.getElementById('status-badge').innerHTML = '<span>📜 MODE: HISTORICAL REPLAY</span>';
+                headerStatus.className = 'badge-status yellow';
+                headerStatus.innerHTML = '<span>📜 MODE: HISTORICAL REPLAY</span>';
 
                 if (!historicalMap) {
                     setTimeout(initHistoricalMap, 100);
                 } else {
                     historicalMap.invalidateSize();
+                    loadHistoricalMapData();
                 }
             }
         }
@@ -841,14 +861,14 @@
                 const d = data.data;
                 const prov = data.provenance || {};
 
-                // Update Status Pill Badge
-                const statusBadge = document.getElementById('status-badge');
+                // Update Header Status Badge
+                const headerStatus = document.getElementById('header-status-badge');
                 if (data.status === 'live') {
-                    statusBadge.className = 'badge-status green';
-                    statusBadge.innerHTML = `<span class="pulse-dot"></span> <span>Open-Meteo: LIVE (${data.freshness})</span>`;
+                    headerStatus.className = 'badge-status green';
+                    headerStatus.innerHTML = `<span class="pulse-dot"></span> <span>🟢 LIVE | Open-Meteo (${formatIST(d.timestamp)})</span>`;
                 } else if (data.status === 'cached') {
-                    statusBadge.className = 'badge-status yellow';
-                    statusBadge.innerHTML = `<span>Open-Meteo: CACHED (${data.freshness})</span>`;
+                    headerStatus.className = 'badge-status yellow';
+                    headerStatus.innerHTML = `<span>⚠️ LIVE CACHED (${data.freshness})</span>`;
                 }
 
                 // Weather Cards Update
@@ -857,14 +877,14 @@
                 document.getElementById('card-humidity').textContent = `${d.relative_humidity_pct !== null ? d.relative_humidity_pct : '--'} %`;
                 document.getElementById('card-rain').textContent = `${d.precipitation_mm !== null ? d.precipitation_mm.toFixed(1) : '0.0'} mm`;
                 document.getElementById('card-wind').textContent = `${d.wind_speed_kmh !== null ? d.wind_speed_kmh.toFixed(1) : '--'} km/h`;
-                document.getElementById('card-wind-dir').textContent = `Direction: ${d.wind_direction_deg !== null ? d.wind_direction_deg : '--'}° (${d.wind_speed_ms !== null ? d.wind_speed_ms : '--'} m/s)`;
+                document.getElementById('card-wind-dir-text').textContent = `${d.wind_direction_deg !== null ? d.wind_direction_deg : '--'}° (${d.wind_speed_ms !== null ? d.wind_speed_ms : '--'} m/s)`;
                 document.getElementById('card-pressure').textContent = `${d.surface_pressure_hpa !== null ? Math.round(d.surface_pressure_hpa) : '--'} hPa`;
-                document.getElementById('card-cloud').textContent = `Cloud cover: ${d.cloud_cover_pct !== null ? d.cloud_cover_pct : '--'}%`;
-                document.getElementById('card-emoji').textContent = d.weather_emoji || '🌡️';
+                document.getElementById('card-cloud').textContent = `${d.cloud_cover_pct !== null ? d.cloud_cover_pct : '--'}%`;
+                document.getElementById('card-emoji').textContent = d.weather_emoji || '☁️';
                 document.getElementById('card-desc').textContent = d.weather_description || 'Unknown';
 
                 // Provenance Details
-                document.getElementById('live-observed-time').textContent = `Observed: ${formatIST(d.timestamp)}`;
+                document.getElementById('live-observed-time').textContent = `Updated: ${formatIST(d.timestamp)}`;
                 document.getElementById('prov-provider').textContent = prov.source || 'Open-Meteo';
                 document.getElementById('prov-observed').textContent = formatIST(prov.observed_at || d.timestamp);
                 document.getElementById('prov-fetched').textContent = formatIST(prov.fetched_at);
@@ -875,7 +895,7 @@
                 provBadge.textContent = prov.freshness || data.freshness;
                 provBadge.className = `conf-badge ${data.freshness === 'FRESH' ? 'conf-HIGH' : 'conf-MEDIUM'}`;
 
-                refreshSecondsRemaining = 300; // Reset countdown
+                refreshSecondsRemaining = 300;
                 if (manual) {
                     showSystemAlert('Live weather refreshed successfully.', 'success', 3000);
                 }
@@ -906,7 +926,7 @@
                     let timeLabel = index === 0 ? 'NOW' : item.time ? item.time.split('T')[1].substring(0, 5) : `+${index}h`;
                     card.innerHTML = `
                         <div class="time">${timeLabel}</div>
-                        <div class="emoji">${item.weather_emoji || '⛅'}</div>
+                        <div class="emoji">${item.weather_emoji || '☁️'}</div>
                         <div class="temp">${item.temperature_c !== null ? Math.round(item.temperature_c) : '--'}°C</div>
                         <div class="rain">${item.precipitation_mm !== null && item.precipitation_mm > 0 ? item.precipitation_mm.toFixed(1) + 'mm' : '0.0mm'}</div>
                     `;
@@ -944,7 +964,7 @@
                             weight: 1.2,
                             opacity: 0.8,
                             color: '#1e293b',
-                            fillOpacity: 0.35
+                            fillOpacity: 0.25
                         };
                     },
                     onEachFeature: function(feature, layer) {
@@ -1022,7 +1042,7 @@
 
         function setHistoricalVariable(varName, btn) {
             currentVariable = varName;
-            document.querySelectorAll('.var-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#view-historical .var-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             loadHistoricalMapData();
             loadPanchayatDetail(selectedPanchayatId);
