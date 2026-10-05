@@ -2,7 +2,7 @@
   "dataset_name": "Weather Station Observations",
   "source": "Open-Meteo Weather Station Archives & NOAA GHCN-D / IMD Peelamedu",
   "source_url": "https://archive-api.open-meteo.com/v1/archive",
-  "download_date": "2026-10-04",
+  "download_date": "2026-10-05",
   "original_filename": "synth_observations.csv",
   "format": "csv",
   "crs": "EPSG:4326",
@@ -29,7 +29,7 @@
   "validation_summary": {
     "dataset_name": "Weather Station Observations",
     "source_key": "observations",
-    "timestamp": "2026-10-04T11:24:25.979277+00:00",
+    "timestamp": "2026-10-05T16:38:09.513960+00:00",
     "source": "UNKNOWN",
     "status": "READY",
     "is_valid": true,
